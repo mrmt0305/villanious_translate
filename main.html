@@ -1,0 +1,1117 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>カード翻訳アップロード</title>
+
+<style>
+
+body{
+    margin:0;
+    font-family:sans-serif;
+    background:#f1f5f9;
+    color:#0f172a;
+}
+
+.container{
+    width:100%;
+    padding:40px;
+    box-sizing:border-box;
+}
+
+.title{
+    font-size:24px;
+    font-weight:bold;
+    margin-bottom:30px;
+}
+
+.layout{
+    --layout-gap: 20px;
+    display:flex;
+    gap:var(--layout-gap);
+}
+
+.panel{
+    background:#f8fafc;
+    border:2px dashed #cbd5e1;
+    border-radius:20px;
+    padding:20px;
+    box-sizing:border-box;
+    min-width:0;
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+}
+
+.main{
+    flex:0 0 calc((100% - (var(--layout-gap) * 2)) * 0.6);
+    width:calc((100% - (var(--layout-gap) * 2)) * 0.6);
+    min-height:400px;
+}
+
+.side{
+    flex:0 0 calc((100% - (var(--layout-gap) * 2)) * 0.2);
+    width:calc((100% - (var(--layout-gap) * 2)) * 0.2);
+    min-height:400px;
+}
+
+.editor-side{
+    flex:0 0 calc((100% - (var(--layout-gap) * 2)) * 0.2);
+    width:calc((100% - (var(--layout-gap) * 2)) * 0.2);
+    min-height:400px;
+}
+
+.droparea{
+    background:white;
+    border:1px solid #e2e8f0;
+    border-radius:15px;
+    min-height:170px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-direction:column;
+    text-align:center;
+    color:#475569;
+    padding:16px;
+    transition:all .15s ease;
+}
+
+.droparea.has-items{
+    justify-content:flex-start;
+    align-items:stretch;
+}
+
+.droparea.dragover{
+    border-color:#3b82f6;
+    background:#eff6ff;
+}
+
+.thumb-viewport{
+    border:1px solid #dbe3ee;
+    background:white;
+    border-radius:14px;
+    padding:8px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+}
+
+.thumb-track-wrap{
+    overflow-x:scroll;
+    overflow-y:hidden;
+    scrollbar-gutter:stable;
+    flex:1;
+}
+
+.thumb-track{
+    display:flex;
+    gap:8px;
+    transition:transform .18s ease;
+}
+
+.thumb-item{
+    width:248px;
+    min-width:248px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:4px;
+}
+
+.thumb{
+    width:100%;
+    height:340px;
+    border:2px solid transparent;
+    border-radius:10px;
+    background:#f8fafc;
+    cursor:pointer;
+    padding:0;
+    overflow:hidden;
+}
+
+.thumb img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    display:block;
+}
+
+.thumb.active{
+    border-color:#2563eb;
+    box-shadow:0 0 0 2px #dbeafe inset;
+}
+
+.thumb.dragging{
+    opacity:.6;
+}
+
+.thumb.drag-target{
+    border-color:#0ea5e9;
+    box-shadow:0 0 0 2px #bae6fd inset;
+}
+
+.thumb-order{
+    min-width:24px;
+    height:24px;
+    padding:0 6px;
+    border-radius:999px;
+    background:rgba(15,23,42,.82);
+    color:#fff;
+    font-size:12px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    z-index:2;
+    pointer-events:none;
+}
+
+.nav-btn{
+    width:32px;
+    height:32px;
+    border-radius:999px;
+    border:1px solid #cbd5e1;
+    background:#fff;
+    cursor:pointer;
+}
+
+.nav-btn:disabled{
+    opacity:.45;
+    cursor:not-allowed;
+}
+
+.editor{
+    border:1px solid #d8e1ee;
+    background:#fff;
+    border-radius:14px;
+    padding:12px;
+    min-height:240px;
+}
+
+.editor-grid{
+    display:grid;
+    grid-template-columns:1fr;
+    gap:12px;
+}
+
+.editor-preview{
+    width:100%;
+    height:190px;
+    border-radius:10px;
+    border:1px solid #dbe3ee;
+    overflow:hidden;
+    background:#f8fafc;
+}
+
+.editor-preview img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    display:block;
+}
+
+.field{
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+    margin-bottom:10px;
+}
+
+.field input{
+    height:34px;
+    border:1px solid #cbd5e1;
+    border-radius:8px;
+    padding:0 10px;
+}
+
+.row{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+}
+
+.btn{
+    height:34px;
+    border-radius:8px;
+    border:1px solid #cbd5e1;
+    padding:0 12px;
+    background:#fff;
+    cursor:pointer;
+}
+
+.btn.primary{
+    background:#2563eb;
+    color:#fff;
+    border-color:#1d4ed8;
+}
+
+.btn.danger{
+    background:#dc2626;
+    border-color:#b91c1c;
+    color:#fff;
+}
+
+.meta{
+    color:#64748b;
+    font-size:13px;
+}
+
+.icon{
+    font-size:40px;
+    margin-bottom:10px;
+}
+
+.dict-table{
+    width:100%;
+    border-collapse:collapse;
+    table-layout:fixed;
+    background:#fff;
+    border:1px solid #dbe3ee;
+    border-radius:10px;
+    overflow:hidden;
+}
+
+.dict-table th,
+.dict-table td{
+    border-bottom:1px solid #e2e8f0;
+    padding:8px;
+    text-align:left;
+    vertical-align:middle;
+}
+
+.dict-table th{
+    background:#f8fafc;
+    font-size:13px;
+}
+
+.dict-table tbody tr:last-child td{
+    border-bottom:none;
+}
+
+.dict-table input{
+    width:100%;
+    height:32px;
+    box-sizing:border-box;
+    border:1px solid #cbd5e1;
+    border-radius:8px;
+    padding:0 8px;
+}
+
+.dict-add{
+    width:100%;
+}
+
+.result-panel{
+    border:1px solid #d8e1ee;
+    background:#fff;
+    border-radius:14px;
+    padding:12px;
+}
+
+.result-list{
+    display:flex;
+    gap:8px;
+    transition:transform .18s ease;
+}
+
+.result-viewport{
+    border:1px solid #dbe3ee;
+    background:white;
+    border-radius:14px;
+    padding:8px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+}
+
+.result-track-wrap{
+    overflow-x:scroll;
+    overflow-y:hidden;
+    scrollbar-gutter:stable;
+    flex:1;
+}
+
+.result-item{
+    width:248px;
+    min-width:248px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:4px;
+}
+
+.result-flip{
+    width:100%;
+    height:340px;
+    padding:0;
+    border:0;
+    background:transparent;
+    cursor:pointer;
+    perspective:1000px;
+}
+
+.result-card{
+    width:100%;
+    height:100%;
+    position:relative;
+    transform-style:preserve-3d;
+    transition:transform .45s ease;
+}
+
+.result-item.flipped .result-card{
+    transform:rotateY(180deg);
+}
+
+.result-face{
+    position:absolute;
+    inset:0;
+    box-sizing:border-box;
+    border:1px solid #dbe3ee;
+    border-radius:10px;
+    background:#f8fafc;
+    padding:8px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    text-align:center;
+    overflow:hidden;
+    backface-visibility:hidden;
+}
+
+.result-face.back{
+    transform:rotateY(180deg);
+}
+
+.result-order{
+    min-width:24px;
+    height:24px;
+    padding:0 6px;
+    border-radius:999px;
+    background:rgba(15,23,42,.82);
+    color:#fff;
+    font-size:12px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    z-index:2;
+}
+
+.result-head{
+    width:100%;
+    font-size:15px;
+    font-weight:700;
+    line-height:1.2;
+    padding-bottom:4px;
+    margin-bottom:6px;
+    border-bottom:1px solid #cbd5e1;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+}
+
+.result-row{
+    font-size:13px;
+    line-height:1.3;
+    width:100%;
+}
+
+.result-type{
+    font-size:11px;
+    margin-top:3mm;
+}
+
+.hide{
+    display:none !important;
+}
+
+@media (max-width: 920px){
+    .layout{
+        flex-direction:column;
+    }
+    .editor-side,
+    .main,
+    .side{
+        width:auto;
+        flex:1 1 auto;
+    }
+    .editor-preview{
+        width:100%;
+        height:220px;
+    }
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="title">
+カード翻訳用アップロード
+</div>
+
+<div class="layout">
+
+<!-- 選択中カード編集 -->
+
+<div class="panel editor-side">
+<div class="editor">
+<h3>選択中の画像を編集</h3>
+<div class="editor-grid">
+<div class="editor-preview">
+<img id="editorPreview" alt="選択中画像">
+</div>
+<div>
+<div class="field">
+<label for="displayName">表示名</label>
+<input id="displayName" type="text" placeholder="表示名を入力">
+</div>
+<div class="meta" id="fileInfo"></div>
+<div class="row" style="margin-top:10px;">
+<button id="saveNameBtn" class="btn primary">表示名を保存</button>
+<button id="rotateBtn" class="btn">90° 回転</button>
+<button id="replaceBtn" class="btn">画像を差し替え</button>
+<button id="deleteBtn" class="btn danger">この画像を削除</button>
+</div>
+<input id="replaceInput" type="file" accept="image/*" style="display:none;">
+</div>
+</div>
+</div>
+</div>
+
+<!-- カードアップロード -->
+
+<div class="panel main">
+
+<h2 id="cardUploadTitle">カード画像アップロード</h2>
+<p id="cardUploadHint">複数枚まとめてドラッグ＆ドロップ</p>
+
+<div class="droparea" id="cardDrop">
+<div id="cardDropPlaceholder">
+<div class="icon">⤴️</div>
+<p>画像をアップロード</p>
+<p class="meta">対応形式: PNG / JPG / WEBP</p>
+</div>
+<div class="thumb-viewport">
+<button id="prevBtn" class="nav-btn" aria-label="前へ">◀</button>
+<div class="thumb-track-wrap">
+<div id="thumbTrack" class="thumb-track"></div>
+</div>
+<button id="nextBtn" class="nav-btn" aria-label="次へ">▶</button>
+</div>
+</div>
+
+<button id="goBtn" class="btn primary" type="button">Go!</button>
+<div class="field" style="margin-top:8px;">
+<label for="openaiApiKey">OpenAI API Key</label>
+<input id="openaiApiKey" type="password" placeholder="sk-...">
+</div>
+<div class="meta">APIキーはブラウザ内でのみ使用します</div>
+<div id="resultPanel" class="result-panel hide">
+<h3>翻訳結果</h3>
+<div class="result-viewport">
+<button id="resultPrevBtn" class="nav-btn" aria-label="翻訳結果 前へ">◀</button>
+<div class="result-track-wrap">
+<div id="resultList" class="result-list"></div>
+</div>
+<button id="resultNextBtn" class="nav-btn" aria-label="翻訳結果 次へ">▶</button>
+</div>
+</div>
+
+</div>
+
+<!-- カスタム用語辞書 -->
+
+<div class="panel side">
+
+<h3>カスタム用語辞書</h3>
+<table class="dict-table">
+<thead>
+<tr>
+<th>英単語</th>
+<th>日本語訳</th>
+</tr>
+</thead>
+<tbody id="termBody">
+<tr>
+<td><input type="text" aria-label="英単語 1"></td>
+<td><input type="text" aria-label="日本語訳 1"></td>
+</tr>
+</tbody>
+</table>
+<button id="addTermBtn" class="btn dict-add" type="button">＋</button>
+<div class="meta" id="termMeta">1 / 20</div>
+
+</div>
+
+</div>
+
+</div>
+
+<script>
+const cardDrop = document.getElementById("cardDrop");
+const cardDropPlaceholder = document.getElementById("cardDropPlaceholder");
+const cardUploadTitle = document.getElementById("cardUploadTitle");
+const cardUploadHint = document.getElementById("cardUploadHint");
+const thumbTrack = document.getElementById("thumbTrack");
+const thumbViewport = document.querySelector("#cardDrop .thumb-viewport");
+const thumbTrackWrap = document.querySelector(".thumb-track-wrap");
+const prevBtn = document.getElementById("prevBtn");
+const nextBtn = document.getElementById("nextBtn");
+const editorPreview = document.getElementById("editorPreview");
+const displayName = document.getElementById("displayName");
+const fileInfo = document.getElementById("fileInfo");
+const saveNameBtn = document.getElementById("saveNameBtn");
+const rotateBtn = document.getElementById("rotateBtn");
+const replaceBtn = document.getElementById("replaceBtn");
+const deleteBtn = document.getElementById("deleteBtn");
+const replaceInput = document.getElementById("replaceInput");
+const goBtn = document.getElementById("goBtn");
+const openaiApiKey = document.getElementById("openaiApiKey");
+const resultPanel = document.getElementById("resultPanel");
+const resultList = document.getElementById("resultList");
+const resultTrackWrap = document.querySelector(".result-track-wrap");
+const resultPrevBtn = document.getElementById("resultPrevBtn");
+const resultNextBtn = document.getElementById("resultNextBtn");
+const termBody = document.getElementById("termBody");
+const addTermBtn = document.getElementById("addTermBtn");
+const termMeta = document.getElementById("termMeta");
+
+let cards = [];
+let selectedId = null;
+let viewStart = 0;
+let resultViewStart = 0;
+let draggingCardId = null;
+let syncingScroll = false;
+const flippedResultIds = new Set();
+const thumbStep = 256;
+const maxTerms = 20;
+const orderSymbols = ["①","②","③","④","⑤","⑥","⑦","⑧","⑨","⑩","⑪","⑫","⑬","⑭","⑮","⑯","⑰","⑱","⑲","⑳"];
+const itemGap = 8;
+
+function createCardData(file){
+    return {
+        id: crypto.randomUUID(),
+        file,
+        url: URL.createObjectURL(file),
+        displayName: file.name,
+        rotation: 0,
+        extractedTitle: "",
+        extractedEffect: "",
+        extractedType: "",
+        extracting: false,
+        extractError: ""
+    };
+}
+
+function addCardFiles(fileList){
+    const imageFiles = Array.from(fileList).filter(f => f.type.startsWith("image/"));
+    const next = imageFiles.map(createCardData);
+    cards = cards.concat(next);
+
+    if(!selectedId && cards.length > 0){
+        selectedId = cards[0].id;
+    }
+    render();
+}
+
+function cleanupRemovedUrls(oldCards, nextCards){
+    const nextIds = new Set(nextCards.map(c => c.id));
+    oldCards.forEach(c => {
+        if(!nextIds.has(c.id)){
+            URL.revokeObjectURL(c.url);
+        }
+    });
+}
+
+function setSelected(id){
+    selectedId = id;
+    const idx = cards.findIndex(c => c.id === id);
+    const visibleCount = getVisibleCount(thumbTrackWrap);
+    if(idx !== -1){
+        if(idx < viewStart) viewStart = idx;
+        if(idx >= viewStart + visibleCount) viewStart = idx - visibleCount + 1;
+    }
+    render();
+}
+
+function updateEditor(){
+    const selected = cards.find(c => c.id === selectedId);
+    if(!selected){
+        editorPreview.removeAttribute("src");
+        editorPreview.style.display = "none";
+        displayName.value = "";
+        fileInfo.textContent = "";
+        saveNameBtn.disabled = true;
+        rotateBtn.disabled = true;
+        replaceBtn.disabled = true;
+        deleteBtn.disabled = true;
+        return;
+    }
+    saveNameBtn.disabled = false;
+    rotateBtn.disabled = false;
+    replaceBtn.disabled = false;
+    deleteBtn.disabled = false;
+    editorPreview.style.display = "block";
+    editorPreview.src = selected.url;
+    editorPreview.style.transform = "rotate(" + selected.rotation + "deg)";
+    displayName.value = selected.displayName;
+    fileInfo.textContent = "元ファイル: " + selected.file.name + " / " + Math.round(selected.file.size / 1024) + "KB";
+}
+
+function getOrderLabel(index){
+    return orderSymbols[index] || String(index + 1);
+}
+
+function getSourceTitle(card){
+    return card.file.name.replace(/\.[^.]+$/, "");
+}
+
+function escapeHtml(text){
+    return String(text)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#39;");
+}
+
+function getCardBackTitle(card){
+    return card.extractedTitle || getSourceTitle(card);
+}
+
+function getCardBackEffect(card){
+    if(card.extracting) return "読み取り中...";
+    if(card.extractError) return "読み取りエラー";
+    return card.extractedEffect || "Go! で英語テキストを読み取り";
+}
+
+function getCardBackType(card){
+    if(card.extracting) return "読み取り中...";
+    if(card.extractError) return card.extractError;
+    return card.extractedType || "未取得";
+}
+
+function fileToDataUrl(file){
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(String(reader.result || ""));
+        reader.onerror = () => reject(new Error("画像の読み込みに失敗しました"));
+        reader.readAsDataURL(file);
+    });
+}
+
+function sleep(ms){
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function fetchOpenAIWithRetry(url, init, retries){
+    for(let attempt = 0; attempt <= retries; attempt += 1){
+        const response = await fetch(url, init);
+        if(response.status !== 429 || attempt === retries){
+            return response;
+        }
+
+        const retryAfterHeader = response.headers.get("retry-after");
+        const retryAfterMs = retryAfterHeader ? Math.max(0, Number(retryAfterHeader) * 1000) : 0;
+        const backoffMs = retryAfterMs || (1500 * Math.pow(2, attempt));
+        await sleep(backoffMs);
+    }
+    throw new Error("API再試行に失敗しました");
+}
+
+async function extractCardText(card, apiKey){
+    card.extracting = true;
+    card.extractError = "";
+    renderResultCards();
+
+    try{
+        const imageDataUrl = await fileToDataUrl(card.file);
+        const response = await fetchOpenAIWithRetry("https://api.openai.com/v1/chat/completions", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + apiKey
+            },
+            body: JSON.stringify({
+                model: "gpt-4.1-mini",
+                messages: [
+                    {
+                        role: "system",
+                        content: "You extract text from trading card images. Return JSON only."
+                    },
+                    {
+                        role: "user",
+                        content: [
+                            {
+                                type: "text",
+                                text: "Read the card and extract English title, card effect text, and card type. If unknown, return empty string."
+                            },
+                            {
+                                type: "image_url",
+                                image_url: { url: imageDataUrl }
+                            }
+                        ]
+                    }
+                ],
+                response_format: {
+                    type: "json_schema",
+                    json_schema: {
+                        name: "card_ocr",
+                        strict: true,
+                        schema: {
+                            type: "object",
+                            properties: {
+                                title: { type: "string" },
+                                effect: { type: "string" },
+                                cardType: { type: "string" }
+                            },
+                            required: ["title", "effect", "cardType"],
+                            additionalProperties: false
+                        }
+                    }
+                }
+            })
+        }, 3);
+
+        if(!response.ok){
+            let detail = "";
+            try{
+                const errJson = await response.json();
+                detail = errJson && errJson.error && errJson.error.message ? errJson.error.message : "";
+            }catch(_e){
+                detail = "";
+            }
+            throw new Error("APIエラー " + response.status + (detail ? ": " + detail : ""));
+        }
+
+        const data = await response.json();
+        const content = data.choices && data.choices[0] && data.choices[0].message ? data.choices[0].message.content : "{}";
+        const parsed = JSON.parse(content || "{}");
+
+        card.extractedTitle = (parsed.title || "").trim();
+        card.extractedEffect = (parsed.effect || "").trim();
+        card.extractedType = (parsed.cardType || "").trim();
+    }catch(error){
+        card.extractError = error instanceof Error ? error.message : "読み取りに失敗しました";
+    }finally{
+        card.extracting = false;
+        renderResultCards();
+    }
+}
+
+function getVisibleCount(trackWrap){
+    if(!trackWrap) return 1;
+    return Math.max(1, Math.floor((trackWrap.clientWidth + itemGap) / thumbStep));
+}
+
+function getMaxStart(trackWrap){
+    return Math.max(0, cards.length - getVisibleCount(trackWrap));
+}
+
+function syncTrackScroll(sourceWrap, targetWrap){
+    if(syncingScroll || !sourceWrap || !targetWrap) return;
+    syncingScroll = true;
+    targetWrap.scrollLeft = sourceWrap.scrollLeft;
+    syncingScroll = false;
+}
+
+function moveCardBefore(sourceId, targetId){
+    const sourceIndex = cards.findIndex(c => c.id === sourceId);
+    const targetIndex = cards.findIndex(c => c.id === targetId);
+    if(sourceIndex === -1 || targetIndex === -1 || sourceIndex === targetIndex){
+        return;
+    }
+
+    const nextCards = cards.slice();
+    const moved = nextCards.splice(sourceIndex, 1)[0];
+    const insertIndex = sourceIndex < targetIndex ? targetIndex - 1 : targetIndex;
+    nextCards.splice(insertIndex, 0, moved);
+    cards = nextCards;
+    render();
+}
+
+function renderThumbs(){
+    thumbTrack.innerHTML = "";
+    cards.forEach((card, index) => {
+        const item = document.createElement("div");
+        item.className = "thumb-item";
+
+        const btn = document.createElement("button");
+        btn.className = "thumb" + (card.id === selectedId ? " active" : "");
+        btn.type = "button";
+        btn.title = card.displayName;
+        btn.draggable = true;
+        btn.addEventListener("click", () => setSelected(card.id));
+        btn.addEventListener("dragstart", (e) => {
+            draggingCardId = card.id;
+            btn.classList.add("dragging");
+            if(e.dataTransfer){
+                e.dataTransfer.effectAllowed = "move";
+                e.dataTransfer.setData("text/plain", card.id);
+            }
+        });
+        btn.addEventListener("dragend", () => {
+            draggingCardId = null;
+            btn.classList.remove("dragging");
+        });
+        btn.addEventListener("dragover", (e) => {
+            if(!draggingCardId || draggingCardId === card.id) return;
+            e.preventDefault();
+            btn.classList.add("drag-target");
+            if(e.dataTransfer){
+                e.dataTransfer.dropEffect = "move";
+            }
+        });
+        btn.addEventListener("dragleave", () => {
+            btn.classList.remove("drag-target");
+        });
+        btn.addEventListener("drop", (e) => {
+            e.preventDefault();
+            btn.classList.remove("drag-target");
+            const sourceId = draggingCardId || (e.dataTransfer ? e.dataTransfer.getData("text/plain") : "");
+            if(!sourceId || sourceId === card.id) return;
+            moveCardBefore(sourceId, card.id);
+        });
+
+        const img = document.createElement("img");
+        img.src = card.url;
+        img.alt = card.displayName;
+        img.style.transform = "rotate(" + card.rotation + "deg)";
+        const order = document.createElement("span");
+        order.className = "thumb-order";
+        order.textContent = getOrderLabel(index);
+        btn.appendChild(img);
+        item.appendChild(order);
+        item.appendChild(btn);
+        thumbTrack.appendChild(item);
+    });
+
+    const visibleCount = getVisibleCount(thumbTrackWrap);
+    const maxStart = getMaxStart(thumbTrackWrap);
+    if(viewStart > maxStart) viewStart = maxStart;
+    thumbTrackWrap.scrollLeft = viewStart * thumbStep;
+    prevBtn.disabled = viewStart <= 0;
+    nextBtn.disabled = viewStart >= maxStart;
+}
+
+function renderResultCards(){
+    resultList.innerHTML = "";
+
+    if(cards.length === 0){
+        const empty = document.createElement("div");
+        empty.className = "meta";
+        empty.textContent = "カードがありません";
+        resultList.appendChild(empty);
+        resultViewStart = 0;
+        resultTrackWrap.scrollLeft = 0;
+        resultPrevBtn.disabled = true;
+        resultNextBtn.disabled = true;
+        return;
+    }
+
+    cards.forEach((card, index) => {
+        const itemEl = document.createElement("div");
+        itemEl.className = "result-item";
+        if(flippedResultIds.has(card.id)){
+            itemEl.classList.add("flipped");
+        }
+        itemEl.innerHTML =
+            '<span class="result-order">' + getOrderLabel(index) + "</span>" +
+            '<button class="result-flip" type="button" aria-label="翻訳結果カードを裏返す">' +
+            '<div class="result-card">' +
+            '<div class="result-face front">' +
+            '<div class="result-head">' + escapeHtml(card.displayName) + "</div>" +
+            '<div class="result-row">（翻訳結果）</div>' +
+            '<div class="result-row result-type">（翻訳結果）</div>' +
+            "</div>" +
+            '<div class="result-face back">' +
+            '<div class="result-head">' + escapeHtml(getCardBackTitle(card)) + "</div>" +
+            '<div class="result-row">' + escapeHtml(getCardBackEffect(card)) + "</div>" +
+            '<div class="result-row result-type">' + escapeHtml(getCardBackType(card)) + "</div>" +
+            "</div>" +
+            "</div>" +
+            "</button>";
+        itemEl.querySelector(".result-flip").addEventListener("click", () => {
+            if(flippedResultIds.has(card.id)){
+                flippedResultIds.delete(card.id);
+                itemEl.classList.remove("flipped");
+            }else{
+                flippedResultIds.add(card.id);
+                itemEl.classList.add("flipped");
+            }
+        });
+        resultList.appendChild(itemEl);
+    });
+
+    const maxStart = getMaxStart(resultTrackWrap);
+    if(resultViewStart > maxStart) resultViewStart = maxStart;
+    resultTrackWrap.scrollLeft = resultViewStart * thumbStep;
+    resultPrevBtn.disabled = resultViewStart <= 0;
+    resultNextBtn.disabled = resultViewStart >= maxStart;
+}
+
+function render(){
+    const hasCards = cards.length > 0;
+    cardUploadTitle.classList.toggle("hide", hasCards);
+    cardUploadHint.classList.toggle("hide", hasCards);
+    cardDrop.classList.toggle("has-items", hasCards);
+    cardDropPlaceholder.classList.toggle("hide", hasCards);
+    thumbViewport.classList.toggle("hide", !hasCards);
+    renderThumbs();
+    updateEditor();
+    if(!resultPanel.classList.contains("hide")){
+        renderResultCards();
+    }
+}
+
+function setupDropArea(area, onFiles){
+    area.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        area.classList.add("dragover");
+    });
+    area.addEventListener("dragleave", () => area.classList.remove("dragover"));
+    area.addEventListener("drop", (e) => {
+        e.preventDefault();
+        area.classList.remove("dragover");
+        if(e.dataTransfer && e.dataTransfer.files){
+            onFiles(e.dataTransfer.files);
+        }
+    });
+}
+
+setupDropArea(cardDrop, addCardFiles);
+
+function updateTermMeta(){
+    const count = termBody.querySelectorAll("tr").length;
+    termMeta.textContent = count + " / " + maxTerms;
+    addTermBtn.disabled = count >= maxTerms;
+}
+
+function addTermRow(){
+    const count = termBody.querySelectorAll("tr").length;
+    if(count >= maxTerms) return;
+
+    const rowNo = count + 1;
+    const tr = document.createElement("tr");
+    tr.innerHTML = '<td><input type="text" aria-label="英単語 ' + rowNo + '"></td><td><input type="text" aria-label="日本語訳 ' + rowNo + '"></td>';
+    termBody.appendChild(tr);
+    updateTermMeta();
+}
+
+addTermBtn.addEventListener("click", addTermRow);
+goBtn.addEventListener("click", async () => {
+    const apiKey = openaiApiKey.value.trim();
+    if(!apiKey){
+        alert("OpenAI API Key を入力してください");
+        return;
+    }
+    resultPanel.classList.remove("hide");
+    goBtn.disabled = true;
+    goBtn.textContent = "読み取り中...";
+    try{
+        for(const card of cards){
+            await extractCardText(card, apiKey);
+        }
+    }finally{
+        goBtn.disabled = false;
+        goBtn.textContent = "Go!";
+        renderResultCards();
+    }
+});
+
+prevBtn.addEventListener("click", () => {
+    viewStart = Math.max(0, viewStart - 1);
+    render();
+});
+
+nextBtn.addEventListener("click", () => {
+    const maxStart = getMaxStart(thumbTrackWrap);
+    viewStart = Math.min(maxStart, viewStart + 1);
+    render();
+});
+
+resultPrevBtn.addEventListener("click", () => {
+    resultViewStart = Math.max(0, resultViewStart - 1);
+    renderResultCards();
+});
+
+resultNextBtn.addEventListener("click", () => {
+    const maxStart = getMaxStart(resultTrackWrap);
+    resultViewStart = Math.min(maxStart, resultViewStart + 1);
+    renderResultCards();
+});
+
+thumbTrackWrap.addEventListener("scroll", () => {
+    viewStart = Math.round(thumbTrackWrap.scrollLeft / thumbStep);
+    const maxStart = getMaxStart(thumbTrackWrap);
+    if(viewStart > maxStart) viewStart = maxStart;
+    prevBtn.disabled = viewStart <= 0;
+    nextBtn.disabled = viewStart >= maxStart;
+    syncTrackScroll(thumbTrackWrap, resultTrackWrap);
+});
+
+resultTrackWrap.addEventListener("scroll", () => {
+    resultViewStart = Math.round(resultTrackWrap.scrollLeft / thumbStep);
+    const maxStart = getMaxStart(resultTrackWrap);
+    if(resultViewStart > maxStart) resultViewStart = maxStart;
+    resultPrevBtn.disabled = resultViewStart <= 0;
+    resultNextBtn.disabled = resultViewStart >= maxStart;
+    syncTrackScroll(resultTrackWrap, thumbTrackWrap);
+});
+
+saveNameBtn.addEventListener("click", () => {
+    const selected = cards.find(c => c.id === selectedId);
+    if(!selected) return;
+    selected.displayName = displayName.value.trim() || selected.file.name;
+    render();
+});
+
+rotateBtn.addEventListener("click", () => {
+    const selected = cards.find(c => c.id === selectedId);
+    if(!selected) return;
+    selected.rotation = (selected.rotation + 90) % 360;
+    render();
+});
+
+replaceBtn.addEventListener("click", () => replaceInput.click());
+
+replaceInput.addEventListener("change", () => {
+    const selected = cards.find(c => c.id === selectedId);
+    const file = replaceInput.files && replaceInput.files[0];
+    if(!selected || !file || !file.type.startsWith("image/")) return;
+
+    URL.revokeObjectURL(selected.url);
+    selected.file = file;
+    selected.url = URL.createObjectURL(file);
+    selected.rotation = 0;
+    selected.extractedTitle = "";
+    selected.extractedEffect = "";
+    selected.extractedType = "";
+    selected.extractError = "";
+    selected.extracting = false;
+    if(!selected.displayName){
+        selected.displayName = file.name;
+    }
+    replaceInput.value = "";
+    render();
+});
+
+deleteBtn.addEventListener("click", () => {
+    if(!selectedId) return;
+    flippedResultIds.delete(selectedId);
+    const oldCards = cards.slice();
+    cards = cards.filter(c => c.id !== selectedId);
+    cleanupRemovedUrls(oldCards, cards);
+    selectedId = cards.length ? cards[Math.max(0, Math.min(viewStart, cards.length - 1))].id : null;
+    render();
+});
+
+window.addEventListener("resize", render);
+
+render();
+updateTermMeta();
+</script>
+
+</body>
+</html>
