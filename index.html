@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <title>カード翻訳アップロード</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20,400,0,0" />
 
 <style>
 
@@ -20,9 +21,55 @@ body{
 }
 
 .title{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:30px;
+}
+
+.title-text{
     font-size:24px;
     font-weight:bold;
-    margin-bottom:30px;
+}
+
+.key-icon-btn{
+    width:28px;
+    height:28px;
+    border:1px solid #cbd5e1;
+    border-radius:8px;
+    background:#fff;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    color:#334155;
+}
+
+.material-symbols-outlined{
+    font-size:18px;
+    line-height:1;
+}
+
+.modal{
+    position:fixed;
+    inset:0;
+    background:rgba(15,23,42,.35);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    z-index:50;
+}
+
+.modal-card{
+    width:min(420px, calc(100vw - 32px));
+    background:#fff;
+    border:1px solid #cbd5e1;
+    border-radius:12px;
+    padding:14px;
+    box-sizing:border-box;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
 }
 
 .layout{
@@ -256,8 +303,11 @@ body{
 }
 
 .icon{
-    font-size:40px;
     margin-bottom:10px;
+}
+
+.icon .material-symbols-outlined{
+    font-size:40px;
 }
 
 .dict-table{
@@ -296,8 +346,103 @@ body{
     padding:0 8px;
 }
 
+.dict-color-rows{
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+    margin-bottom:8px;
+}
+
+.dict-color-row{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    font-size:13px;
+    color:#334155;
+}
+
+.color-code{
+    color:#64748b;
+    font-family:monospace;
+    font-size:12px;
+}
+
+.color-chip{
+    width:14px;
+    height:14px;
+    border:1px solid #94a3b8;
+    border-radius:2px;
+    cursor:pointer;
+    flex:0 0 auto;
+}
+
+.color-chip-input{
+    width:14px;
+    height:14px;
+    padding:0;
+    border:1px solid #94a3b8;
+    border-radius:2px;
+    cursor:pointer;
+    flex:0 0 auto;
+    background:none;
+}
+
+.color-chip-input::-webkit-color-swatch-wrapper{
+    padding:0;
+}
+
+.color-chip-input::-webkit-color-swatch{
+    border:none;
+    border-radius:1px;
+}
+
+.color-chip-input{
+    width:14px;
+    height:14px;
+    padding:0;
+    border:1px solid #94a3b8;
+    border-radius:2px;
+    cursor:pointer;
+    flex:0 0 auto;
+    background:none;
+}
+
+.color-chip-input::-webkit-color-swatch-wrapper{
+    padding:0;
+}
+
+.color-chip-input::-webkit-color-swatch{
+    border:none;
+    border-radius:1px;
+}
+
 .dict-add{
     width:100%;
+}
+
+.bg-preview-wrap{
+    border:1px solid #dbe3ee;
+    border-radius:10px;
+    background:#fff;
+    min-height:180px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:8px;
+}
+
+.bg-preview-wrap img{
+    width:100%;
+    height:auto;
+    border-radius:8px;
+    border:1px solid #cbd5e1;
+    display:none;
+}
+
+.bg-preview-placeholder{
+    color:#64748b;
+    font-size:13px;
+    text-align:center;
 }
 
 .result-panel{
@@ -339,9 +484,13 @@ body{
     gap:4px;
 }
 
+.result-retry-btn{
+    width:100%;
+}
+
 .result-flip{
     width:100%;
-    height:340px;
+    height:170px;
     padding:0;
     border:0;
     background:transparent;
@@ -361,13 +510,18 @@ body{
     transform:rotateY(180deg);
 }
 
+.result-item.auto-flip .result-card{
+    animation:flipToFront .55s ease forwards;
+}
+
 .result-face{
     position:absolute;
     inset:0;
     box-sizing:border-box;
     border:1px solid #dbe3ee;
     border-radius:10px;
-    background:#f8fafc;
+    background:var(--result-bg, #f8fafc);
+    color:var(--result-text, #0f172a);
     padding:8px;
     display:flex;
     flex-direction:column;
@@ -379,6 +533,11 @@ body{
 
 .result-face.back{
     transform:rotateY(180deg);
+}
+
+@keyframes flipToFront{
+    from{ transform:rotateY(180deg); }
+    to{ transform:rotateY(0deg); }
 }
 
 .result-order{
@@ -403,20 +562,31 @@ body{
     padding-bottom:4px;
     margin-bottom:6px;
     border-bottom:1px solid #cbd5e1;
-    white-space:nowrap;
+    height:36px;
+    min-height:36px;
+    max-height:36px;
     overflow:hidden;
-    text-overflow:ellipsis;
 }
 
 .result-row{
     font-size:13px;
     line-height:1.3;
     width:100%;
+    height:84px;
+    min-height:84px;
+    max-height:84px;
+    overflow:hidden;
 }
 
 .result-type{
     font-size:11px;
     margin-top:3mm;
+    border-top:1px solid #cbd5e1;
+    padding-top:4px;
+    height:20px;
+    min-height:20px;
+    max-height:20px;
+    overflow:hidden;
 }
 
 .hide{
@@ -447,7 +617,10 @@ body{
 <div class="container">
 
 <div class="title">
-カード翻訳用アップロード
+<div class="title-text">カード翻訳用アップロード</div>
+<button id="apiKeyOpenBtn" class="key-icon-btn" type="button" aria-label="APIキー入力を開く">
+<span class="material-symbols-outlined">key</span>
+</button>
 </div>
 
 <div class="layout">
@@ -477,6 +650,26 @@ body{
 </div>
 </div>
 </div>
+<div class="editor">
+<h3>カード背景を生成</h3>
+<div class="dict-color-rows">
+<div class="dict-color-row">
+<input id="bgColorInput" class="color-chip-input" type="color" value="#ffffff" aria-label="背景色を選択">
+<span>背景色</span>
+<span id="bgColorCode" class="color-code">(#FFFFFF)</span>
+</div>
+<div class="dict-color-row">
+<input id="textColorInput" class="color-chip-input" type="color" value="#000000" aria-label="文字色を選択">
+<span>文字色</span>
+<span id="textColorCode" class="color-code">(#000000)</span>
+</div>
+</div>
+<div class="bg-preview-wrap">
+<img id="bgPreviewImage" alt="生成されたカード背景プレビュー">
+<div id="bgPreviewPlaceholder" class="bg-preview-placeholder">Go! 押下後に背景画像を生成します</div>
+</div>
+<button id="regenerateBgBtn" class="btn" type="button">再生成</button>
+</div>
 </div>
 
 <!-- カードアップロード -->
@@ -488,7 +681,7 @@ body{
 
 <div class="droparea" id="cardDrop">
 <div id="cardDropPlaceholder">
-<div class="icon">⤴️</div>
+<div class="icon"><span class="material-symbols-outlined">upload</span></div>
 <p>画像をアップロード</p>
 <p class="meta">対応形式: PNG / JPG / WEBP</p>
 </div>
@@ -502,11 +695,6 @@ body{
 </div>
 
 <button id="goBtn" class="btn primary" type="button">Go!</button>
-<div class="field" style="margin-top:8px;">
-<label for="openaiApiKey">OpenAI API Key</label>
-<input id="openaiApiKey" type="password" placeholder="sk-...">
-</div>
-<div class="meta">APIキーはブラウザ内でのみ使用します</div>
 <div id="resultPanel" class="result-panel hide">
 <h3>翻訳結果</h3>
 <div class="result-viewport">
@@ -520,11 +708,11 @@ body{
 
 </div>
 
-<!-- カスタム用語辞書 -->
+<!-- カスタム用語辞典 -->
 
 <div class="panel side">
 
-<h3>カスタム用語辞書</h3>
+<h3>カスタム用語辞典</h3>
 <table class="dict-table">
 <thead>
 <tr>
@@ -548,6 +736,20 @@ body{
 
 </div>
 
+<div id="apiKeyModal" class="modal hide">
+<div class="modal-card">
+<h3 style="margin:0;">OpenAI API Key</h3>
+<div class="field" style="margin:0;">
+<label for="openaiApiKey">APIキー</label>
+<input id="openaiApiKey" type="password" placeholder="sk-...">
+</div>
+<div class="meta">APIキーはブラウザ内でのみ使用します</div>
+<div class="row">
+<button id="apiKeyCloseBtn" class="btn" type="button">閉じる</button>
+</div>
+</div>
+</div>
+
 <script>
 const cardDrop = document.getElementById("cardDrop");
 const cardDropPlaceholder = document.getElementById("cardDropPlaceholder");
@@ -567,15 +769,26 @@ const replaceBtn = document.getElementById("replaceBtn");
 const deleteBtn = document.getElementById("deleteBtn");
 const replaceInput = document.getElementById("replaceInput");
 const goBtn = document.getElementById("goBtn");
+const apiKeyOpenBtn = document.getElementById("apiKeyOpenBtn");
+const apiKeyModal = document.getElementById("apiKeyModal");
+const apiKeyCloseBtn = document.getElementById("apiKeyCloseBtn");
 const openaiApiKey = document.getElementById("openaiApiKey");
 const resultPanel = document.getElementById("resultPanel");
 const resultList = document.getElementById("resultList");
 const resultTrackWrap = document.querySelector(".result-track-wrap");
 const resultPrevBtn = document.getElementById("resultPrevBtn");
 const resultNextBtn = document.getElementById("resultNextBtn");
+const bgColorInput = document.getElementById("bgColorInput");
+const bgColorCode = document.getElementById("bgColorCode");
+const textColorInput = document.getElementById("textColorInput");
+const textColorCode = document.getElementById("textColorCode");
+const bgPreviewImage = document.getElementById("bgPreviewImage");
+const bgPreviewPlaceholder = document.getElementById("bgPreviewPlaceholder");
+const regenerateBgBtn = document.getElementById("regenerateBgBtn");
 const termBody = document.getElementById("termBody");
 const addTermBtn = document.getElementById("addTermBtn");
 const termMeta = document.getElementById("termMeta");
+const apiKeyStorageKey = "openai_api_key_cache";
 
 let cards = [];
 let selectedId = null;
@@ -584,10 +797,50 @@ let resultViewStart = 0;
 let draggingCardId = null;
 let syncingScroll = false;
 const flippedResultIds = new Set();
+const autoFlipResultIds = new Set();
 const thumbStep = 256;
 const maxTerms = 20;
+const cardRequestIntervalMs = 1200;
 const orderSymbols = ["①","②","③","④","⑤","⑥","⑦","⑧","⑨","⑩","⑪","⑫","⑬","⑭","⑮","⑯","⑰","⑱","⑲","⑳"];
 const itemGap = 8;
+
+const cachedApiKey = localStorage.getItem(apiKeyStorageKey);
+if(cachedApiKey){
+    openaiApiKey.value = cachedApiKey;
+}
+
+apiKeyOpenBtn.addEventListener("click", () => {
+    apiKeyModal.classList.remove("hide");
+    openaiApiKey.focus();
+});
+apiKeyCloseBtn.addEventListener("click", () => apiKeyModal.classList.add("hide"));
+apiKeyModal.addEventListener("click", (e) => {
+    if(e.target === apiKeyModal){
+        apiKeyModal.classList.add("hide");
+    }
+});
+
+function setColorCode(el, value){
+    el.textContent = "(" + value.toUpperCase() + ")";
+}
+
+bgColorInput.addEventListener("input", () => {
+    setColorCode(bgColorCode, bgColorInput.value);
+});
+textColorInput.addEventListener("input", () => {
+    setColorCode(textColorCode, textColorInput.value);
+});
+setColorCode(bgColorCode, bgColorInput.value);
+setColorCode(textColorCode, textColorInput.value);
+
+openaiApiKey.addEventListener("input", () => {
+    const value = openaiApiKey.value.trim();
+    if(value){
+        localStorage.setItem(apiKeyStorageKey, value);
+    }else{
+        localStorage.removeItem(apiKeyStorageKey);
+    }
+});
 
 function createCardData(file){
     return {
@@ -596,9 +849,14 @@ function createCardData(file){
         url: URL.createObjectURL(file),
         displayName: file.name,
         rotation: 0,
+        resultBgColor: "#ffffff",
+        resultTextColor: "#000000",
         extractedTitle: "",
         extractedEffect: "",
         extractedType: "",
+        translatedTitle: "",
+        translatedEffect: "",
+        translatedType: "",
         extracting: false,
         extractError: ""
     };
@@ -692,6 +950,219 @@ function getCardBackType(card){
     return card.extractedType || "未取得";
 }
 
+function getCardFrontTitle(card){
+    if(card.extracting) return "翻訳中...";
+    if(card.extractError) return "翻訳エラー";
+    return card.translatedTitle || "（翻訳結果）";
+}
+
+function getCardFrontEffect(card){
+    if(card.extracting) return "翻訳中...";
+    if(card.extractError) return card.extractError;
+    return card.translatedEffect || "（翻訳結果）";
+}
+
+function getCardFrontType(card){
+    if(card.extracting) return "翻訳中...";
+    if(card.extractError) return "（要再実行）";
+    return card.translatedType || "（翻訳結果）";
+}
+
+function getApiKeyOrAlert(){
+    const apiKey = openaiApiKey.value.trim();
+    if(!apiKey){
+        alert("OpenAI API Key を入力してください");
+        return "";
+    }
+    return apiKey;
+}
+
+function applySelectedColorsToCards(targetCards){
+    const bg = bgColorInput.value || "#ffffff";
+    const text = textColorInput.value || "#000000";
+    targetCards.forEach(card => {
+        card.resultBgColor = bg;
+        card.resultTextColor = text;
+    });
+}
+
+function rgbToHex(r, g, b){
+    const toHex = (n) => Math.max(0, Math.min(255, Math.round(n))).toString(16).padStart(2, "0");
+    return "#" + toHex(r) + toHex(g) + toHex(b);
+}
+
+function hexToRgb(hex){
+    const h = (hex || "#000000").replace("#", "");
+    if(h.length !== 6) return { r: 0, g: 0, b: 0 };
+    return {
+        r: parseInt(h.slice(0, 2), 16),
+        g: parseInt(h.slice(2, 4), 16),
+        b: parseInt(h.slice(4, 6), 16)
+    };
+}
+
+function colorDistance(a, b){
+    const dr = a.r - b.r;
+    const dg = a.g - b.g;
+    const db = a.b - b.b;
+    return Math.sqrt((dr * dr) + (dg * dg) + (db * db));
+}
+
+function chooseTextColorForBg(bg){
+    const luminance = (0.299 * bg.r) + (0.587 * bg.g) + (0.114 * bg.b);
+    return luminance > 145 ? "#000000" : "#ffffff";
+}
+
+function quantizeKey(r, g, b, step){
+    const qr = Math.round(r / step) * step;
+    const qg = Math.round(g / step) * step;
+    const qb = Math.round(b / step) * step;
+    return qr + "," + qg + "," + qb;
+}
+
+function parseRgbKey(key){
+    const parts = key.split(",").map(Number);
+    return { r: parts[0] || 0, g: parts[1] || 0, b: parts[2] || 0 };
+}
+
+function getMostFrequentColorKey(map){
+    let bestKey = "";
+    let bestCount = -1;
+    map.forEach((count, key) => {
+        if(count > bestCount){
+            bestCount = count;
+            bestKey = key;
+        }
+    });
+    return bestKey;
+}
+
+function fileToImage(file){
+    return new Promise((resolve, reject) => {
+        const url = URL.createObjectURL(file);
+        const img = new Image();
+        img.onload = () => {
+            URL.revokeObjectURL(url);
+            resolve(img);
+        };
+        img.onerror = () => {
+            URL.revokeObjectURL(url);
+            reject(new Error("画像解析に失敗しました"));
+        };
+        img.src = url;
+    });
+}
+
+async function detectCardThemeColors(file){
+    const img = await fileToImage(file);
+    const sampleW = 320;
+    const sampleH = Math.max(1, Math.round((img.height / img.width) * sampleW));
+    const canvas = document.createElement("canvas");
+    canvas.width = sampleW;
+    canvas.height = sampleH;
+    const ctx = canvas.getContext("2d");
+    if(!ctx){
+        return { bg: "#ffffff", text: "#000000" };
+    }
+    ctx.drawImage(img, 0, 0, sampleW, sampleH);
+
+    const startY = Math.floor(sampleH * 0.5);
+    const data = ctx.getImageData(0, startY, sampleW, sampleH - startY).data;
+
+    const bgMap = new Map();
+    const textMap = new Map();
+    let bgCandidate = { r: 255, g: 255, b: 255 };
+
+    for(let i = 0; i < data.length; i += 16){
+        const r = data[i];
+        const g = data[i + 1];
+        const b = data[i + 2];
+        const a = data[i + 3];
+        if(a < 10) continue;
+        const key = quantizeKey(r, g, b, 24);
+        bgMap.set(key, (bgMap.get(key) || 0) + 1);
+    }
+
+    const bgKey = getMostFrequentColorKey(bgMap);
+    if(bgKey){
+        bgCandidate = parseRgbKey(bgKey);
+    }
+
+    for(let i = 0; i < data.length; i += 16){
+        const r = data[i];
+        const g = data[i + 1];
+        const b = data[i + 2];
+        const a = data[i + 3];
+        if(a < 10) continue;
+        const dist = colorDistance({ r, g, b }, bgCandidate);
+        if(dist < 70) continue;
+        const key = quantizeKey(r, g, b, 20);
+        textMap.set(key, (textMap.get(key) || 0) + 1);
+    }
+
+    const textKey = getMostFrequentColorKey(textMap);
+    const textCandidate = textKey ? parseRgbKey(textKey) : hexToRgb(chooseTextColorForBg(bgCandidate));
+
+    return {
+        bg: rgbToHex(bgCandidate.r, bgCandidate.g, bgCandidate.b),
+        text: rgbToHex(textCandidate.r, textCandidate.g, textCandidate.b)
+    };
+}
+
+async function detectAndSetThemeColors(cardsList){
+    if(!cardsList.length) return;
+    const target = cardsList.find(c => c.id === selectedId) || cardsList[0];
+    const colors = await detectCardThemeColors(target.file);
+    bgColorInput.value = colors.bg;
+    textColorInput.value = colors.text;
+    setColorCode(bgColorCode, bgColorInput.value);
+    setColorCode(textColorCode, textColorInput.value);
+}
+
+function setBackgroundPreview(dataUrl){
+    if(dataUrl){
+        bgPreviewImage.src = dataUrl;
+        bgPreviewImage.style.display = "block";
+        bgPreviewPlaceholder.style.display = "none";
+    }else{
+        bgPreviewImage.removeAttribute("src");
+        bgPreviewImage.style.display = "none";
+        bgPreviewPlaceholder.style.display = "block";
+    }
+}
+
+async function generateBackgroundFromFirstCard(cardsList){
+    if(!cardsList.length){
+        setBackgroundPreview("");
+        return;
+    }
+    const firstCard = cardsList[0];
+    const img = await fileToImage(firstCard.file);
+    const w = 248;
+    const h = 170;
+    const canvas = document.createElement("canvas");
+    canvas.width = w;
+    canvas.height = h;
+    const ctx = canvas.getContext("2d");
+    if(!ctx){
+        setBackgroundPreview("");
+        return;
+    }
+
+    const srcY = Math.floor(img.height * 0.5);
+    const srcH = Math.max(1, img.height - srcY);
+    ctx.drawImage(img, 0, srcY, img.width, srcH, 0, 0, w, h);
+
+    ctx.fillStyle = bgColorInput.value || "#ffffff";
+    ctx.fillRect(1, 1, w - 2, h - 2);
+
+    ctx.strokeStyle = "#94a3b8";
+    ctx.lineWidth = 1;
+    ctx.strokeRect(0.5, 0.5, w - 1, h - 1);
+
+    setBackgroundPreview(canvas.toDataURL("image/png"));
+}
+
 function fileToDataUrl(file){
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -721,6 +1192,7 @@ async function fetchOpenAIWithRetry(url, init, retries){
 }
 
 async function extractCardText(card, apiKey){
+    flippedResultIds.add(card.id);
     card.extracting = true;
     card.extractError = "";
     renderResultCards();
@@ -734,18 +1206,18 @@ async function extractCardText(card, apiKey){
                 "Authorization": "Bearer " + apiKey
             },
             body: JSON.stringify({
-                model: "gpt-4.1-mini",
+                model: "gpt-4.1",
                 messages: [
                     {
                         role: "system",
-                        content: "You extract text from trading card images. Return JSON only."
+                        content: "You extract English text from trading card images and translate to Japanese. Return JSON only."
                     },
                     {
                         role: "user",
                         content: [
                             {
                                 type: "text",
-                                text: "Read the card and extract English title, card effect text, and card type. If unknown, return empty string."
+                                text: "Read the card and return: English title/effect/type, plus Japanese translation title/effect/type. If unknown, return empty string."
                             },
                             {
                                 type: "image_url",
@@ -764,9 +1236,12 @@ async function extractCardText(card, apiKey){
                             properties: {
                                 title: { type: "string" },
                                 effect: { type: "string" },
-                                cardType: { type: "string" }
+                                cardType: { type: "string" },
+                                jaTitle: { type: "string" },
+                                jaEffect: { type: "string" },
+                                jaType: { type: "string" }
                             },
-                            required: ["title", "effect", "cardType"],
+                            required: ["title", "effect", "cardType", "jaTitle", "jaEffect", "jaType"],
                             additionalProperties: false
                         }
                     }
@@ -792,10 +1267,18 @@ async function extractCardText(card, apiKey){
         card.extractedTitle = (parsed.title || "").trim();
         card.extractedEffect = (parsed.effect || "").trim();
         card.extractedType = (parsed.cardType || "").trim();
+        card.translatedTitle = (parsed.jaTitle || "").trim();
+        card.translatedEffect = (parsed.jaEffect || "").trim();
+        card.translatedType = (parsed.jaType || "").trim();
     }catch(error){
         card.extractError = error instanceof Error ? error.message : "読み取りに失敗しました";
     }finally{
         card.extracting = false;
+        flippedResultIds.delete(card.id);
+        autoFlipResultIds.add(card.id);
+        renderResultCards();
+        await sleep(560);
+        autoFlipResultIds.delete(card.id);
         renderResultCards();
     }
 }
@@ -807,6 +1290,24 @@ function getVisibleCount(trackWrap){
 
 function getMaxStart(trackWrap){
     return Math.max(0, cards.length - getVisibleCount(trackWrap));
+}
+
+function fitTextToBox(element, maxSize, minSize){
+    if(!element) return;
+    let size = maxSize;
+    element.style.fontSize = size + "px";
+
+    while(size > minSize && (element.scrollHeight > element.clientHeight || element.scrollWidth > element.clientWidth)){
+        size -= 0.5;
+        element.style.fontSize = size + "px";
+    }
+}
+
+function fitResultCardText(root){
+    if(!root) return;
+    root.querySelectorAll(".result-head").forEach(el => fitTextToBox(el, 15, 8));
+    root.querySelectorAll(".result-row:not(.result-type)").forEach(el => fitTextToBox(el, 13, 8));
+    root.querySelectorAll(".result-type").forEach(el => fitTextToBox(el, 11, 8));
 }
 
 function syncTrackScroll(sourceWrap, targetWrap){
@@ -913,25 +1414,31 @@ function renderResultCards(){
     cards.forEach((card, index) => {
         const itemEl = document.createElement("div");
         itemEl.className = "result-item";
+        itemEl.style.setProperty("--result-bg", card.resultBgColor || "#ffffff");
+        itemEl.style.setProperty("--result-text", card.resultTextColor || "#000000");
         if(flippedResultIds.has(card.id)){
             itemEl.classList.add("flipped");
+        }
+        if(autoFlipResultIds.has(card.id)){
+            itemEl.classList.add("auto-flip");
         }
         itemEl.innerHTML =
             '<span class="result-order">' + getOrderLabel(index) + "</span>" +
             '<button class="result-flip" type="button" aria-label="翻訳結果カードを裏返す">' +
             '<div class="result-card">' +
             '<div class="result-face front">' +
-            '<div class="result-head">' + escapeHtml(card.displayName) + "</div>" +
-            '<div class="result-row">（翻訳結果）</div>' +
-            '<div class="result-row result-type">（翻訳結果）</div>' +
+            '<div class="result-head">' + escapeHtml(getCardFrontTitle(card)) + "</div>" +
+            '<div class="result-row">' + escapeHtml(getCardFrontEffect(card)) + "</div>" +
+            '<div class="result-row result-type">' + escapeHtml(getCardFrontType(card)) + "</div>" +
             "</div>" +
             '<div class="result-face back">' +
-            '<div class="result-head">' + escapeHtml(getCardBackTitle(card)) + "</div>" +
-            '<div class="result-row">' + escapeHtml(getCardBackEffect(card)) + "</div>" +
-            '<div class="result-row result-type">' + escapeHtml(getCardBackType(card)) + "</div>" +
+            '<div class="result-head result-back-title">' + escapeHtml(getCardBackTitle(card)) + "</div>" +
+            '<div class="result-row result-back-effect">' + escapeHtml(getCardBackEffect(card)) + "</div>" +
+            '<div class="result-row result-type result-back-type">' + escapeHtml(getCardBackType(card)) + "</div>" +
             "</div>" +
             "</div>" +
-            "</button>";
+            "</button>" +
+            '<button class="btn result-retry-btn" type="button"' + (card.extracting || goBtn.disabled ? " disabled" : "") + ">" + (card.extracting ? "再翻訳中..." : "再翻訳") + "</button>";
         itemEl.querySelector(".result-flip").addEventListener("click", () => {
             if(flippedResultIds.has(card.id)){
                 flippedResultIds.delete(card.id);
@@ -941,6 +1448,12 @@ function renderResultCards(){
                 itemEl.classList.add("flipped");
             }
         });
+        itemEl.querySelector(".result-retry-btn").addEventListener("click", async () => {
+            if(goBtn.disabled || card.extracting) return;
+            const apiKey = getApiKeyOrAlert();
+            if(!apiKey) return;
+            await extractCardText(card, apiKey);
+        });
         resultList.appendChild(itemEl);
     });
 
@@ -949,6 +1462,7 @@ function renderResultCards(){
     resultTrackWrap.scrollLeft = resultViewStart * thumbStep;
     resultPrevBtn.disabled = resultViewStart <= 0;
     resultNextBtn.disabled = resultViewStart >= maxStart;
+    requestAnimationFrame(() => fitResultCardText(resultList));
 }
 
 function render(){
@@ -1000,18 +1514,40 @@ function addTermRow(){
 }
 
 addTermBtn.addEventListener("click", addTermRow);
-goBtn.addEventListener("click", async () => {
-    const apiKey = openaiApiKey.value.trim();
-    if(!apiKey){
-        alert("OpenAI API Key を入力してください");
-        return;
+regenerateBgBtn.addEventListener("click", async () => {
+    regenerateBgBtn.disabled = true;
+    const prev = regenerateBgBtn.textContent;
+    regenerateBgBtn.textContent = "再生成中...";
+    try{
+        await generateBackgroundFromFirstCard(cards);
+    }finally{
+        regenerateBgBtn.disabled = false;
+        regenerateBgBtn.textContent = prev;
     }
+});
+goBtn.addEventListener("click", async () => {
+    const apiKey = getApiKeyOrAlert();
+    if(!apiKey) return;
     resultPanel.classList.remove("hide");
     goBtn.disabled = true;
-    goBtn.textContent = "読み取り中...";
+    goBtn.textContent = "背景生成中...";
     try{
-        for(const card of cards){
-            await extractCardText(card, apiKey);
+        await detectAndSetThemeColors(cards);
+    }catch(_e){
+    }
+    try{
+        await generateBackgroundFromFirstCard(cards);
+    }catch(_e){
+    }
+    applySelectedColorsToCards(cards);
+    goBtn.textContent = "読み取り中...";
+    renderResultCards();
+    try{
+        for(let i = 0; i < cards.length; i += 1){
+            await extractCardText(cards[i], apiKey);
+            if(i < cards.length - 1){
+                await sleep(cardRequestIntervalMs);
+            }
         }
     }finally{
         goBtn.disabled = false;
@@ -1088,8 +1624,12 @@ replaceInput.addEventListener("change", () => {
     selected.extractedTitle = "";
     selected.extractedEffect = "";
     selected.extractedType = "";
+    selected.translatedTitle = "";
+    selected.translatedEffect = "";
+    selected.translatedType = "";
     selected.extractError = "";
     selected.extracting = false;
+    autoFlipResultIds.delete(selected.id);
     if(!selected.displayName){
         selected.displayName = file.name;
     }
@@ -1100,6 +1640,7 @@ replaceInput.addEventListener("change", () => {
 deleteBtn.addEventListener("click", () => {
     if(!selectedId) return;
     flippedResultIds.delete(selectedId);
+    autoFlipResultIds.delete(selectedId);
     const oldCards = cards.slice();
     cards = cards.filter(c => c.id !== selectedId);
     cleanupRemovedUrls(oldCards, cards);
