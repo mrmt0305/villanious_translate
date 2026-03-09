@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<title>カード翻訳アップロード</title>
+<title>カード翻訳サイト</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20,400,0,0" />
 
 <style>
@@ -176,6 +176,37 @@ body{
     overflow:hidden;
 }
 
+.thumb-actions{
+    width:100%;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:6px;
+}
+
+.thumb-replace-btn{
+    flex:1;
+}
+
+.thumb-icon-btn{
+    width:32px;
+    height:32px;
+    border:1px solid #cbd5e1;
+    border-radius:8px;
+    background:#fff;
+    color:#475569;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+}
+
+.thumb-icon-btn.danger{
+    color:#b91c1c;
+    border-color:#fca5a5;
+    background:#fff5f5;
+}
+
 .thumb img{
     width:100%;
     height:100%;
@@ -326,6 +357,71 @@ body{
     padding:8px;
     text-align:left;
     vertical-align:middle;
+}
+
+.dict-table .color-col{
+    width:34px;
+    text-align:center;
+}
+
+.dict-table .delete-col{
+    width:40px;
+    text-align:center;
+}
+
+.glossary-title-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:8px;
+}
+
+.glossary-reset-btn{
+    width:28px;
+    height:28px;
+    border:1px solid #cbd5e1;
+    border-radius:8px;
+    background:#fff;
+    color:#475569;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+}
+
+.term-delete-btn{
+    width:28px;
+    height:28px;
+    border:1px solid #cbd5e1;
+    border-radius:8px;
+    background:#fff;
+    color:#475569;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    position:relative;
+}
+
+.term-delete-btn .material-symbols-outlined{
+    font-size:18px;
+}
+
+.term-delete-btn.locked{
+    cursor:not-allowed;
+    color:#94a3b8;
+    border-color:#cbd5e1;
+    background:#f8fafc;
+}
+
+.term-delete-btn.locked::after{
+    content:"";
+    position:absolute;
+    left:5px;
+    right:5px;
+    top:13px;
+    border-top:2px solid #ef4444;
+    transform:rotate(-28deg);
 }
 
 .dict-table th{
@@ -484,8 +580,90 @@ body{
     gap:4px;
 }
 
+.result-tools{
+    width:100%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    position:relative;
+    min-height:28px;
+}
+
 .result-retry-btn{
     width:100%;
+}
+
+.result-edit-toggle-btn{
+    width:28px;
+    height:28px;
+    border:1px solid #cbd5e1;
+    border-radius:8px;
+    background:#fff;
+    color:#475569;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    position:absolute;
+    right:0;
+    top:0;
+}
+
+.result-edit-toggle-btn:disabled{
+    border-color:#e2e8f0;
+    background:#f1f5f9;
+    color:#94a3b8;
+    cursor:not-allowed;
+}
+
+.result-inline-edit{
+    width:100%;
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+}
+
+.result-inline-edit input,
+.result-inline-edit textarea{
+    width:100%;
+    box-sizing:border-box;
+    border:1px solid #cbd5e1;
+    border-radius:8px;
+    padding:6px 8px;
+    font-size:12px;
+    font-family:inherit;
+    background:#fff;
+}
+
+.result-inline-edit textarea{
+    min-height:62px;
+    resize:vertical;
+}
+
+.result-edit-input,
+.result-edit-textarea{
+    width:100%;
+    box-sizing:border-box;
+    border:1px solid #94a3b8;
+    border-radius:6px;
+    background:#fff;
+    color:#0f172a;
+    font-family:inherit;
+    text-align:center;
+    padding:4px 6px;
+}
+
+.result-edit-input{
+    height:100%;
+    font-size:14px;
+    font-weight:700;
+}
+
+.result-edit-textarea{
+    height:100%;
+    resize:none;
+    font-size:12px;
+    line-height:1.25;
 }
 
 .result-flip{
@@ -617,7 +795,7 @@ body{
 <div class="container">
 
 <div class="title">
-<div class="title-text">カード翻訳用アップロード</div>
+<div class="title-text">カード翻訳サイト</div>
 <button id="apiKeyOpenBtn" class="key-icon-btn" type="button" aria-label="APIキー入力を開く">
 <span class="material-symbols-outlined">key</span>
 </button>
@@ -625,31 +803,9 @@ body{
 
 <div class="layout">
 
-<!-- 選択中カード編集 -->
+<!-- カード背景生成 -->
 
 <div class="panel editor-side">
-<div class="editor">
-<h3>選択中の画像を編集</h3>
-<div class="editor-grid">
-<div class="editor-preview">
-<img id="editorPreview" alt="選択中画像">
-</div>
-<div>
-<div class="field">
-<label for="displayName">表示名</label>
-<input id="displayName" type="text" placeholder="表示名を入力">
-</div>
-<div class="meta" id="fileInfo"></div>
-<div class="row" style="margin-top:10px;">
-<button id="saveNameBtn" class="btn primary">表示名を保存</button>
-<button id="rotateBtn" class="btn">90° 回転</button>
-<button id="replaceBtn" class="btn">画像を差し替え</button>
-<button id="deleteBtn" class="btn danger">この画像を削除</button>
-</div>
-<input id="replaceInput" type="file" accept="image/*" style="display:none;">
-</div>
-</div>
-</div>
 <div class="editor">
 <h3>カード背景を生成</h3>
 <div class="dict-color-rows">
@@ -676,9 +832,6 @@ body{
 
 <div class="panel main">
 
-<h2 id="cardUploadTitle">カード画像アップロード</h2>
-<p id="cardUploadHint">複数枚まとめてドラッグ＆ドロップ</p>
-
 <div class="droparea" id="cardDrop">
 <div id="cardDropPlaceholder">
 <div class="icon"><span class="material-symbols-outlined">upload</span></div>
@@ -693,6 +846,7 @@ body{
 <button id="nextBtn" class="nav-btn" aria-label="次へ">▶</button>
 </div>
 </div>
+<input id="replaceInput" type="file" accept="image/*" style="display:none;">
 
 <button id="goBtn" class="btn primary" type="button">Go!</button>
 <div id="resultPanel" class="result-panel hide">
@@ -712,18 +866,45 @@ body{
 
 <div class="panel side">
 
+<div class="glossary-title-row">
 <h3>カスタム用語辞典</h3>
+<button id="resetGlossaryBtn" class="glossary-reset-btn" type="button" aria-label="カスタム用語辞典をリセット">
+<span class="material-symbols-outlined">restart_alt</span>
+</button>
+</div>
 <table class="dict-table">
 <thead>
 <tr>
+<th class="color-col">色</th>
 <th>英単語</th>
 <th>日本語訳</th>
+<th class="delete-col"></th>
 </tr>
 </thead>
 <tbody id="termBody">
 <tr>
-<td><input type="text" aria-label="英単語 1"></td>
-<td><input type="text" aria-label="日本語訳 1"></td>
+<td class="color-col"><input class="color-chip-input" type="color" value="#ff0000" aria-label="文字色 1"></td>
+<td><input type="text" value="Ally" aria-label="英単語 1"></td>
+<td><input type="text" value="味方" aria-label="日本語訳 1"></td>
+<td class="delete-col"><button class="term-delete-btn locked" type="button" aria-label="行を削除不可" disabled><span class="material-symbols-outlined">delete</span></button></td>
+</tr>
+<tr>
+<td class="color-col"><input class="color-chip-input" type="color" value="#ff8c00" aria-label="文字色 2"></td>
+<td><input type="text" value="Hero" aria-label="英単語 2"></td>
+<td><input type="text" value="ヒーロー" aria-label="日本語訳 2"></td>
+<td class="delete-col"><button class="term-delete-btn locked" type="button" aria-label="行を削除不可" disabled><span class="material-symbols-outlined">delete</span></button></td>
+</tr>
+<tr>
+<td class="color-col"><input class="color-chip-input" type="color" value="#ff69b4" aria-label="文字色 3"></td>
+<td><input type="text" value="Condition" aria-label="英単語 3"></td>
+<td><input type="text" value="条件" aria-label="日本語訳 3"></td>
+<td class="delete-col"><button class="term-delete-btn locked" type="button" aria-label="行を削除不可" disabled><span class="material-symbols-outlined">delete</span></button></td>
+</tr>
+<tr>
+<td class="color-col"><input class="color-chip-input" type="color" value="#9acd32" aria-label="文字色 4"></td>
+<td><input type="text" value="Effect" aria-label="英単語 4"></td>
+<td><input type="text" value="効果" aria-label="日本語訳 4"></td>
+<td class="delete-col"><button class="term-delete-btn locked" type="button" aria-label="行を削除不可" disabled><span class="material-symbols-outlined">delete</span></button></td>
 </tr>
 </tbody>
 </table>
@@ -753,20 +934,11 @@ body{
 <script>
 const cardDrop = document.getElementById("cardDrop");
 const cardDropPlaceholder = document.getElementById("cardDropPlaceholder");
-const cardUploadTitle = document.getElementById("cardUploadTitle");
-const cardUploadHint = document.getElementById("cardUploadHint");
 const thumbTrack = document.getElementById("thumbTrack");
 const thumbViewport = document.querySelector("#cardDrop .thumb-viewport");
 const thumbTrackWrap = document.querySelector(".thumb-track-wrap");
 const prevBtn = document.getElementById("prevBtn");
 const nextBtn = document.getElementById("nextBtn");
-const editorPreview = document.getElementById("editorPreview");
-const displayName = document.getElementById("displayName");
-const fileInfo = document.getElementById("fileInfo");
-const saveNameBtn = document.getElementById("saveNameBtn");
-const rotateBtn = document.getElementById("rotateBtn");
-const replaceBtn = document.getElementById("replaceBtn");
-const deleteBtn = document.getElementById("deleteBtn");
 const replaceInput = document.getElementById("replaceInput");
 const goBtn = document.getElementById("goBtn");
 const apiKeyOpenBtn = document.getElementById("apiKeyOpenBtn");
@@ -785,6 +957,7 @@ const textColorCode = document.getElementById("textColorCode");
 const bgPreviewImage = document.getElementById("bgPreviewImage");
 const bgPreviewPlaceholder = document.getElementById("bgPreviewPlaceholder");
 const regenerateBgBtn = document.getElementById("regenerateBgBtn");
+const resetGlossaryBtn = document.getElementById("resetGlossaryBtn");
 const termBody = document.getElementById("termBody");
 const addTermBtn = document.getElementById("addTermBtn");
 const termMeta = document.getElementById("termMeta");
@@ -796,8 +969,10 @@ let viewStart = 0;
 let resultViewStart = 0;
 let draggingCardId = null;
 let syncingScroll = false;
+let pendingReplaceId = null;
 const flippedResultIds = new Set();
 const autoFlipResultIds = new Set();
+const editingResultIds = new Set();
 const thumbStep = 256;
 const maxTerms = 20;
 const cardRequestIntervalMs = 1200;
@@ -893,28 +1068,25 @@ function setSelected(id){
     render();
 }
 
-function updateEditor(){
-    const selected = cards.find(c => c.id === selectedId);
-    if(!selected){
-        editorPreview.removeAttribute("src");
-        editorPreview.style.display = "none";
-        displayName.value = "";
-        fileInfo.textContent = "";
-        saveNameBtn.disabled = true;
-        rotateBtn.disabled = true;
-        replaceBtn.disabled = true;
-        deleteBtn.disabled = true;
-        return;
+function rotateCardById(id){
+    const card = cards.find(c => c.id === id);
+    if(!card) return;
+    card.rotation = (card.rotation + 90) % 360;
+    render();
+}
+
+function deleteCardById(id){
+    if(!id) return;
+    flippedResultIds.delete(id);
+    autoFlipResultIds.delete(id);
+    editingResultIds.delete(id);
+    const oldCards = cards.slice();
+    cards = cards.filter(c => c.id !== id);
+    cleanupRemovedUrls(oldCards, cards);
+    if(selectedId === id){
+        selectedId = cards.length ? cards[Math.max(0, Math.min(viewStart, cards.length - 1))].id : null;
     }
-    saveNameBtn.disabled = false;
-    rotateBtn.disabled = false;
-    replaceBtn.disabled = false;
-    deleteBtn.disabled = false;
-    editorPreview.style.display = "block";
-    editorPreview.src = selected.url;
-    editorPreview.style.transform = "rotate(" + selected.rotation + "deg)";
-    displayName.value = selected.displayName;
-    fileInfo.textContent = "元ファイル: " + selected.file.name + " / " + Math.round(selected.file.size / 1024) + "KB";
+    render();
 }
 
 function getOrderLabel(index){
@@ -932,6 +1104,65 @@ function escapeHtml(text){
         .replaceAll(">", "&gt;")
         .replaceAll('"', "&quot;")
         .replaceAll("'", "&#39;");
+}
+
+function escapeRegExp(text){
+    return String(text).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function getGlossaryEntries(){
+    const rows = Array.from(termBody.querySelectorAll("tr"));
+    return rows.map((row) => {
+        const colorInput = row.querySelector('input[type="color"]');
+        const textInputs = row.querySelectorAll('input[type="text"]');
+        const en = textInputs[0] ? textInputs[0].value.trim() : "";
+        const ja = textInputs[1] ? textInputs[1].value.trim() : "";
+        const color = colorInput ? colorInput.value : "#000000";
+        return { en, ja, color };
+    }).filter(entry => entry.en && entry.ja);
+}
+
+function buildGlossaryPrompt(entries){
+    if(!entries.length){
+        return "No glossary entries.";
+    }
+    return entries.map((entry) => {
+        return "- " + entry.en + " => " + entry.ja + " (color " + entry.color + ")";
+    }).join("\n");
+}
+
+function applyGlossaryColorToText(japaneseText, sourceEnglishText, entries){
+    let html = escapeHtml(japaneseText || "");
+    if(!html || !entries.length){
+        return html;
+    }
+
+    entries.forEach((entry) => {
+        const enPattern = new RegExp("\\b" + escapeRegExp(entry.en) + "\\b", "i");
+        const jaEscaped = escapeHtml(entry.ja);
+        const jaPattern = new RegExp(escapeRegExp(jaEscaped), "g");
+
+        if(jaPattern.test(html)){
+            html = html.replace(
+                jaPattern,
+                '<span style="color:' + entry.color + ';font-weight:600;">' + jaEscaped + "</span>"
+            );
+            return;
+        }
+
+        if(sourceEnglishText && enPattern.test(sourceEnglishText)){
+            const enEscaped = escapeHtml(entry.en);
+            const enInJaPattern = new RegExp(escapeRegExp(enEscaped), "gi");
+            if(enInJaPattern.test(html)){
+                html = html.replace(
+                    enInJaPattern,
+                    '<span style="color:' + entry.color + ';font-weight:600;">' + jaEscaped + "</span>"
+                );
+            }
+        }
+    });
+
+    return html;
 }
 
 function getCardBackTitle(card){
@@ -966,6 +1197,27 @@ function getCardFrontType(card){
     if(card.extracting) return "翻訳中...";
     if(card.extractError) return "（要再実行）";
     return card.translatedType || "（翻訳結果）";
+}
+
+function getCardFrontTitleHtml(card){
+    if(card.extracting || card.extractError){
+        return escapeHtml(getCardFrontTitle(card));
+    }
+    return applyGlossaryColorToText(card.translatedTitle, card.extractedTitle, getGlossaryEntries()) || "（翻訳結果）";
+}
+
+function getCardFrontEffectHtml(card){
+    if(card.extracting || card.extractError){
+        return escapeHtml(getCardFrontEffect(card));
+    }
+    return applyGlossaryColorToText(card.translatedEffect, card.extractedEffect, getGlossaryEntries()) || "（翻訳結果）";
+}
+
+function getCardFrontTypeHtml(card){
+    if(card.extracting || card.extractError){
+        return escapeHtml(getCardFrontType(card));
+    }
+    return applyGlossaryColorToText(card.translatedType, card.extractedType, getGlossaryEntries()) || "（翻訳結果）";
 }
 
 function getApiKeyOrAlert(){
@@ -1153,12 +1405,70 @@ async function generateBackgroundFromFirstCard(cardsList){
     const srcH = Math.max(1, img.height - srcY);
     ctx.drawImage(img, 0, srcY, img.width, srcH, 0, 0, w, h);
 
-    ctx.fillStyle = bgColorInput.value || "#ffffff";
-    ctx.fillRect(1, 1, w - 2, h - 2);
+    const imageData = ctx.getImageData(0, 0, w, h);
+    const data = imageData.data;
 
-    ctx.strokeStyle = "#94a3b8";
-    ctx.lineWidth = 1;
-    ctx.strokeRect(0.5, 0.5, w - 1, h - 1);
+    // 下半分画像から最頻色を背景色として推定
+    const colorMap = new Map();
+    for(let i = 0; i < data.length; i += 16){
+        const r = data[i];
+        const g = data[i + 1];
+        const b = data[i + 2];
+        const a = data[i + 3];
+        if(a < 10) continue;
+        const key = quantizeKey(r, g, b, 20);
+        colorMap.set(key, (colorMap.get(key) || 0) + 1);
+    }
+    const bgKey = getMostFrequentColorKey(colorMap);
+    const bgRgb = bgKey ? parseRgbKey(bgKey) : { r: 255, g: 255, b: 255 };
+
+    // 文字らしいピクセル(背景色と離れた色)をマスク化
+    const mask = new Uint8Array(w * h);
+    for(let y = 0; y < h; y += 1){
+        for(let x = 0; x < w; x += 1){
+            const idx = (y * w + x) * 4;
+            const dist = colorDistance(
+                { r: data[idx], g: data[idx + 1], b: data[idx + 2] },
+                bgRgb
+            );
+            // 輪郭や枠を壊しにくいよう、外周は保持
+            const isEdge = x < 3 || x > w - 4 || y < 3 || y > h - 4;
+            if(!isEdge && dist > 55){
+                mask[y * w + x] = 1;
+            }
+        }
+    }
+
+    // 2px膨張で文字の隙間も埋める
+    const expanded = new Uint8Array(mask);
+    for(let y = 2; y < h - 2; y += 1){
+        for(let x = 2; x < w - 2; x += 1){
+            let on = 0;
+            for(let dy = -2; dy <= 2 && !on; dy += 1){
+                for(let dx = -2; dx <= 2; dx += 1){
+                    if(mask[(y + dy) * w + (x + dx)]){
+                        on = 1;
+                        break;
+                    }
+                }
+            }
+            if(on) expanded[y * w + x] = 1;
+        }
+    }
+
+    // マスク領域を背景推定色で塗りつぶし（文字消し）
+    for(let y = 0; y < h; y += 1){
+        for(let x = 0; x < w; x += 1){
+            if(!expanded[y * w + x]) continue;
+            const idx = (y * w + x) * 4;
+            data[idx] = bgRgb.r;
+            data[idx + 1] = bgRgb.g;
+            data[idx + 2] = bgRgb.b;
+            data[idx + 3] = 255;
+        }
+    }
+
+    ctx.putImageData(imageData, 0, 0);
 
     setBackgroundPreview(canvas.toDataURL("image/png"));
 }
@@ -1174,6 +1484,17 @@ function fileToDataUrl(file){
 
 function sleep(ms){
     return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+function normalizeJaStyle(text){
+    if(!text) return "";
+    return String(text)
+        .replace(/であるため/g, "なので")
+        .replace(/であるので/g, "なので")
+        .replace(/であるが/g, "だが")
+        .replace(/であると/g, "だと")
+        .replace(/であり、/g, "で、")
+        .replace(/である(?=。|！|!|？|\?|$|\n)/g, "だ");
 }
 
 async function fetchOpenAIWithRetry(url, init, retries){
@@ -1198,6 +1519,8 @@ async function extractCardText(card, apiKey){
     renderResultCards();
 
     try{
+        const glossaryEntries = getGlossaryEntries();
+        const glossaryPrompt = buildGlossaryPrompt(glossaryEntries);
         const imageDataUrl = await fileToDataUrl(card.file);
         const response = await fetchOpenAIWithRetry("https://api.openai.com/v1/chat/completions", {
             method: "POST",
@@ -1210,14 +1533,14 @@ async function extractCardText(card, apiKey){
                 messages: [
                     {
                         role: "system",
-                        content: "You extract English text from trading card images and translate to Japanese. Return JSON only."
+                        content: "You extract English text from trading card images and translate to Japanese. Return JSON only. Japanese must always be concise plain style using short endings like 「〜だ。」「〜する。」. Avoid formal 「〜である」."
                     },
                     {
                         role: "user",
                         content: [
                             {
                                 type: "text",
-                                text: "Read the card and return: English title/effect/type, plus Japanese translation title/effect/type. If unknown, return empty string."
+                                text: "Read the card and return: English title/effect/type, plus Japanese translation title/effect/type. If unknown, return empty string. Japanese must be concise plain style like 「〜だ。」「〜する。」 and should avoid 「〜である」. Use this glossary strictly for Japanese terms when matched:\n" + glossaryPrompt
                             },
                             {
                                 type: "image_url",
@@ -1267,9 +1590,9 @@ async function extractCardText(card, apiKey){
         card.extractedTitle = (parsed.title || "").trim();
         card.extractedEffect = (parsed.effect || "").trim();
         card.extractedType = (parsed.cardType || "").trim();
-        card.translatedTitle = (parsed.jaTitle || "").trim();
-        card.translatedEffect = (parsed.jaEffect || "").trim();
-        card.translatedType = (parsed.jaType || "").trim();
+        card.translatedTitle = normalizeJaStyle((parsed.jaTitle || "").trim());
+        card.translatedEffect = normalizeJaStyle((parsed.jaEffect || "").trim());
+        card.translatedType = normalizeJaStyle((parsed.jaType || "").trim());
     }catch(error){
         card.extractError = error instanceof Error ? error.message : "読み取りに失敗しました";
     }finally{
@@ -1385,6 +1708,28 @@ function renderThumbs(){
         btn.appendChild(img);
         item.appendChild(order);
         item.appendChild(btn);
+        if(card.id === selectedId){
+            const actions = document.createElement("div");
+            actions.className = "thumb-actions";
+            actions.innerHTML =
+                '<button class="btn thumb-replace-btn" type="button">差し替え</button>' +
+                '<button class="thumb-icon-btn" type="button" aria-label="回転">' +
+                '<span class="material-symbols-outlined">rotate_right</span>' +
+                "</button>" +
+                '<button class="thumb-icon-btn danger" type="button" aria-label="削除">' +
+                '<span class="material-symbols-outlined">delete</span>' +
+                "</button>";
+            const replaceBtnEl = actions.children[0];
+            const rotateBtnEl = actions.children[1];
+            const deleteBtnEl = actions.children[2];
+            replaceBtnEl.addEventListener("click", () => {
+                pendingReplaceId = card.id;
+                replaceInput.click();
+            });
+            rotateBtnEl.addEventListener("click", () => rotateCardById(card.id));
+            deleteBtnEl.addEventListener("click", () => deleteCardById(card.id));
+            item.appendChild(actions);
+        }
         thumbTrack.appendChild(item);
     });
 
@@ -1412,24 +1757,37 @@ function renderResultCards(){
     }
 
     cards.forEach((card, index) => {
+        const isEditing = editingResultIds.has(card.id);
+        const isEnglishSide = flippedResultIds.has(card.id);
         const itemEl = document.createElement("div");
         itemEl.className = "result-item";
         itemEl.style.setProperty("--result-bg", card.resultBgColor || "#ffffff");
         itemEl.style.setProperty("--result-text", card.resultTextColor || "#000000");
-        if(flippedResultIds.has(card.id)){
+        if(isEnglishSide){
             itemEl.classList.add("flipped");
         }
         if(autoFlipResultIds.has(card.id)){
             itemEl.classList.add("auto-flip");
         }
         itemEl.innerHTML =
+            '<div class="result-tools">' +
             '<span class="result-order">' + getOrderLabel(index) + "</span>" +
+            '<button class="result-edit-toggle-btn" type="button" aria-label="' + (isEditing ? "編集を確定" : "カードテキストを編集") + '"' + (isEnglishSide ? " disabled" : "") + ">" +
+            '<span class="material-symbols-outlined">' + (isEditing ? "check" : "edit") + "</span>" +
+            "</button>" +
+            "</div>" +
             '<button class="result-flip" type="button" aria-label="翻訳結果カードを裏返す">' +
             '<div class="result-card">' +
             '<div class="result-face front">' +
-            '<div class="result-head">' + escapeHtml(getCardFrontTitle(card)) + "</div>" +
-            '<div class="result-row">' + escapeHtml(getCardFrontEffect(card)) + "</div>" +
-            '<div class="result-row result-type">' + escapeHtml(getCardFrontType(card)) + "</div>" +
+            (isEditing
+                ? '<div class="result-head result-front-title"><input class="result-edit-input result-edit-title" type="text" value="' + escapeHtml(card.translatedTitle) + '" aria-label="タイトル編集"></div>'
+                : '<div class="result-head result-front-title">' + getCardFrontTitleHtml(card) + "</div>") +
+            (isEditing
+                ? '<div class="result-row result-front-effect"><textarea class="result-edit-textarea result-edit-effect" aria-label="内容編集">' + escapeHtml(card.translatedEffect) + "</textarea></div>"
+                : '<div class="result-row result-front-effect">' + getCardFrontEffectHtml(card) + "</div>") +
+            (isEditing
+                ? '<div class="result-row result-type result-front-type"><input class="result-edit-input result-edit-type" type="text" value="' + escapeHtml(card.translatedType) + '" aria-label="種類編集"></div>'
+                : '<div class="result-row result-type result-front-type">' + getCardFrontTypeHtml(card) + "</div>") +
             "</div>" +
             '<div class="result-face back">' +
             '<div class="result-head result-back-title">' + escapeHtml(getCardBackTitle(card)) + "</div>" +
@@ -1440,6 +1798,7 @@ function renderResultCards(){
             "</button>" +
             '<button class="btn result-retry-btn" type="button"' + (card.extracting || goBtn.disabled ? " disabled" : "") + ">" + (card.extracting ? "再翻訳中..." : "再翻訳") + "</button>";
         itemEl.querySelector(".result-flip").addEventListener("click", () => {
+            if(editingResultIds.has(card.id)) return;
             if(flippedResultIds.has(card.id)){
                 flippedResultIds.delete(card.id);
                 itemEl.classList.remove("flipped");
@@ -1454,6 +1813,36 @@ function renderResultCards(){
             if(!apiKey) return;
             await extractCardText(card, apiKey);
         });
+        itemEl.querySelector(".result-edit-toggle-btn").addEventListener("click", () => {
+            if(flippedResultIds.has(card.id)) return;
+            if(editingResultIds.has(card.id)){
+                editingResultIds.delete(card.id);
+            }else{
+                editingResultIds.add(card.id);
+            }
+            renderResultCards();
+        });
+        const frontTitle = itemEl.querySelector(".result-front-title");
+        const frontEffect = itemEl.querySelector(".result-front-effect");
+        const frontType = itemEl.querySelector(".result-front-type");
+        if(isEditing){
+            const editTitle = itemEl.querySelector(".result-edit-title");
+            const editEffect = itemEl.querySelector(".result-edit-effect");
+            const editType = itemEl.querySelector(".result-edit-type");
+            editTitle.addEventListener("input", () => {
+                card.translatedTitle = editTitle.value;
+            });
+            editEffect.addEventListener("input", () => {
+                card.translatedEffect = editEffect.value;
+            });
+            editType.addEventListener("input", () => {
+                card.translatedType = editType.value;
+            });
+        }else{
+            frontTitle.innerHTML = getCardFrontTitleHtml(card);
+            frontEffect.innerHTML = getCardFrontEffectHtml(card);
+            frontType.innerHTML = getCardFrontTypeHtml(card);
+        }
         resultList.appendChild(itemEl);
     });
 
@@ -1467,13 +1856,10 @@ function renderResultCards(){
 
 function render(){
     const hasCards = cards.length > 0;
-    cardUploadTitle.classList.toggle("hide", hasCards);
-    cardUploadHint.classList.toggle("hide", hasCards);
     cardDrop.classList.toggle("has-items", hasCards);
     cardDropPlaceholder.classList.toggle("hide", hasCards);
     thumbViewport.classList.toggle("hide", !hasCards);
     renderThumbs();
-    updateEditor();
     if(!resultPanel.classList.contains("hide")){
         renderResultCards();
     }
@@ -1508,10 +1894,54 @@ function addTermRow(){
 
     const rowNo = count + 1;
     const tr = document.createElement("tr");
-    tr.innerHTML = '<td><input type="text" aria-label="英単語 ' + rowNo + '"></td><td><input type="text" aria-label="日本語訳 ' + rowNo + '"></td>';
+    tr.innerHTML = '<td class="color-col"><input class="color-chip-input" type="color" value="#000000" aria-label="文字色 ' + rowNo + '"></td><td><input type="text" aria-label="英単語 ' + rowNo + '"></td><td><input type="text" aria-label="日本語訳 ' + rowNo + '"></td><td class="delete-col"><button class="term-delete-btn" type="button" aria-label="行を削除"><span class="material-symbols-outlined">delete</span></button></td>';
     termBody.appendChild(tr);
     updateTermMeta();
 }
+
+function getDefaultGlossaryRowsHtml(){
+    return '<tr>' +
+        '<td class="color-col"><input class="color-chip-input" type="color" value="#ff0000" aria-label="文字色 1"></td>' +
+        '<td><input type="text" value="Ally" aria-label="英単語 1"></td>' +
+        '<td><input type="text" value="味方" aria-label="日本語訳 1"></td>' +
+        '<td class="delete-col"><button class="term-delete-btn locked" type="button" aria-label="行を削除不可" disabled><span class="material-symbols-outlined">delete</span></button></td>' +
+        "</tr>" +
+        '<tr>' +
+        '<td class="color-col"><input class="color-chip-input" type="color" value="#ff8c00" aria-label="文字色 2"></td>' +
+        '<td><input type="text" value="Hero" aria-label="英単語 2"></td>' +
+        '<td><input type="text" value="ヒーロー" aria-label="日本語訳 2"></td>' +
+        '<td class="delete-col"><button class="term-delete-btn locked" type="button" aria-label="行を削除不可" disabled><span class="material-symbols-outlined">delete</span></button></td>' +
+        "</tr>" +
+        '<tr>' +
+        '<td class="color-col"><input class="color-chip-input" type="color" value="#ff69b4" aria-label="文字色 3"></td>' +
+        '<td><input type="text" value="Condition" aria-label="英単語 3"></td>' +
+        '<td><input type="text" value="条件" aria-label="日本語訳 3"></td>' +
+        '<td class="delete-col"><button class="term-delete-btn locked" type="button" aria-label="行を削除不可" disabled><span class="material-symbols-outlined">delete</span></button></td>' +
+        "</tr>" +
+        '<tr>' +
+        '<td class="color-col"><input class="color-chip-input" type="color" value="#9acd32" aria-label="文字色 4"></td>' +
+        '<td><input type="text" value="Effect" aria-label="英単語 4"></td>' +
+        '<td><input type="text" value="効果" aria-label="日本語訳 4"></td>' +
+        '<td class="delete-col"><button class="term-delete-btn locked" type="button" aria-label="行を削除不可" disabled><span class="material-symbols-outlined">delete</span></button></td>' +
+        "</tr>";
+}
+
+termBody.addEventListener("click", (e) => {
+    const target = e.target;
+    if(!(target instanceof Element)) return;
+    const deleteBtn = target.closest(".term-delete-btn");
+    if(!deleteBtn) return;
+    if(deleteBtn.hasAttribute("disabled")) return;
+    const row = deleteBtn.closest("tr");
+    if(!row) return;
+    row.remove();
+    updateTermMeta();
+});
+
+resetGlossaryBtn.addEventListener("click", () => {
+    termBody.innerHTML = getDefaultGlossaryRowsHtml();
+    updateTermMeta();
+});
 
 addTermBtn.addEventListener("click", addTermRow);
 regenerateBgBtn.addEventListener("click", async () => {
@@ -1596,24 +2026,9 @@ resultTrackWrap.addEventListener("scroll", () => {
     syncTrackScroll(resultTrackWrap, thumbTrackWrap);
 });
 
-saveNameBtn.addEventListener("click", () => {
-    const selected = cards.find(c => c.id === selectedId);
-    if(!selected) return;
-    selected.displayName = displayName.value.trim() || selected.file.name;
-    render();
-});
-
-rotateBtn.addEventListener("click", () => {
-    const selected = cards.find(c => c.id === selectedId);
-    if(!selected) return;
-    selected.rotation = (selected.rotation + 90) % 360;
-    render();
-});
-
-replaceBtn.addEventListener("click", () => replaceInput.click());
-
 replaceInput.addEventListener("change", () => {
-    const selected = cards.find(c => c.id === selectedId);
+    const targetId = pendingReplaceId || selectedId;
+    const selected = cards.find(c => c.id === targetId);
     const file = replaceInput.files && replaceInput.files[0];
     if(!selected || !file || !file.type.startsWith("image/")) return;
 
@@ -1634,17 +2049,7 @@ replaceInput.addEventListener("change", () => {
         selected.displayName = file.name;
     }
     replaceInput.value = "";
-    render();
-});
-
-deleteBtn.addEventListener("click", () => {
-    if(!selectedId) return;
-    flippedResultIds.delete(selectedId);
-    autoFlipResultIds.delete(selectedId);
-    const oldCards = cards.slice();
-    cards = cards.filter(c => c.id !== selectedId);
-    cleanupRemovedUrls(oldCards, cards);
-    selectedId = cards.length ? cards[Math.max(0, Math.min(viewStart, cards.length - 1))].id : null;
+    pendingReplaceId = null;
     render();
 });
 
