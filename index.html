@@ -28,23 +28,35 @@
 
 <div class="panel editor-side">
 <div class="editor">
-<h3>カード背景を生成</h3>
+<h3>カードの色</h3>
 <div class="dict-color-rows">
 <div class="dict-color-row">
 <input id="bgColorInput" class="color-chip-input" type="color" value="#ffffff" aria-label="背景色を選択">
 <span>背景色</span>
 <span id="bgColorCode" class="color-code">(#FFFFFF)</span>
+<button id="refreshBgColorBtn" class="color-reset-btn color-action-btn" type="button" aria-label="背景色を再取得">
+<span class="material-symbols-outlined">colorize</span>
+<span class="material-symbols-outlined">auto_awesome</span>
+</button>
 </div>
 <div class="dict-color-row">
 <input id="textColorInput" class="color-chip-input" type="color" value="#ebc655" aria-label="文字色を選択">
 <span>文字色</span>
 <span id="textColorCode" class="color-code">(#EBC655)</span>
+<button class="text-color-preset-btn" type="button" data-color="#625C5B" aria-label="文字色を #625C5B にする"></button>
+<button class="text-color-preset-btn gold" type="button" data-color="#EBC655" aria-label="文字色を #EBC655 にする"></button>
 </div>
 </div>
 <div class="bg-preview-wrap">
 <img id="bgPreviewImage" src="image/flame.png" alt="生成されたカード背景プレビュー">
+<div class="bg-preview-glossary" aria-hidden="true">
+<span class="bg-preview-word ally">味方</span>
+<span class="bg-preview-word hero">ヒーロー</span>
+<span class="bg-preview-word condition">条件</span>
+<span class="bg-preview-word effect">効果</span>
+<span class="bg-preview-word item">アイテム</span>
 </div>
-<button id="regenerateBgBtn" class="btn" type="button">再生成</button>
+</div>
 </div>
 </div>
 
@@ -68,13 +80,13 @@
 </div>
 <input id="replaceInput" type="file" accept="image/*" style="display:none;">
 
-<button id="goBtn" class="btn primary" type="button">Go!</button>
+<button id="goBtn" class="btn primary action-primary-btn" type="button">
+<span class="material-symbols-outlined">translate</span>
+<span>翻訳</span>
+</button>
 <div id="resultPanel" class="result-panel hide">
 <div class="result-header">
 <h3>翻訳結果</h3>
-<button id="printBtn" class="key-icon-btn" type="button" aria-label="印刷">
-<span class="material-symbols-outlined">print</span>
-</button>
 </div>
 <div class="result-viewport">
 <button id="resultPrevBtn" class="nav-btn" aria-label="翻訳結果 前へ">◀</button>
@@ -84,6 +96,10 @@
 <button id="resultNextBtn" class="nav-btn" aria-label="翻訳結果 次へ">▶</button>
 </div>
 </div>
+<button id="printBtn" class="btn primary print-action-btn hide" type="button" aria-label="印刷">
+<span class="material-symbols-outlined">print</span>
+<span>印刷</span>
+</button>
 
 </div>
 
@@ -97,6 +113,7 @@
 <span class="material-symbols-outlined">restart_alt</span>
 </button>
 </div>
+<div class="glossary-note">辞典の色付けを外したい語は末尾に <code>/</code> を付けてください</div>
 <table class="dict-table">
 <thead>
 <tr>
@@ -111,31 +128,31 @@
 <td class="color-col"><input class="color-chip-input" type="color" value="#ff0000" aria-label="文字色 1"></td>
 <td><input type="text" value="Ally" aria-label="英単語 1"></td>
 <td><input type="text" value="味方" aria-label="日本語訳 1"></td>
-<td class="delete-col"><button class="term-delete-btn locked" type="button" aria-label="行を削除不可" disabled><span class="material-symbols-outlined">delete</span></button></td>
+<td class="delete-col"><button class="term-reset-btn" type="button" aria-label="1行目を初期値に戻す" data-default-color="#ff0000" data-default-en="Ally" data-default-ja="味方"><span class="material-symbols-outlined">restart_alt</span></button></td>
 </tr>
 <tr>
 <td class="color-col"><input class="color-chip-input" type="color" value="#ff8c00" aria-label="文字色 2"></td>
 <td><input type="text" value="Hero" aria-label="英単語 2"></td>
 <td><input type="text" value="ヒーロー" aria-label="日本語訳 2"></td>
-<td class="delete-col"><button class="term-delete-btn locked" type="button" aria-label="行を削除不可" disabled><span class="material-symbols-outlined">delete</span></button></td>
+<td class="delete-col"><button class="term-reset-btn" type="button" aria-label="2行目を初期値に戻す" data-default-color="#ff8c00" data-default-en="Hero" data-default-ja="ヒーロー"><span class="material-symbols-outlined">restart_alt</span></button></td>
 </tr>
 <tr>
 <td class="color-col"><input class="color-chip-input" type="color" value="#ff69b4" aria-label="文字色 3"></td>
 <td><input type="text" value="Condition" aria-label="英単語 3"></td>
 <td><input type="text" value="条件" aria-label="日本語訳 3"></td>
-<td class="delete-col"><button class="term-delete-btn locked" type="button" aria-label="行を削除不可" disabled><span class="material-symbols-outlined">delete</span></button></td>
+<td class="delete-col"><button class="term-reset-btn" type="button" aria-label="3行目を初期値に戻す" data-default-color="#ff69b4" data-default-en="Condition" data-default-ja="条件"><span class="material-symbols-outlined">restart_alt</span></button></td>
 </tr>
 <tr>
 <td class="color-col"><input class="color-chip-input" type="color" value="#9acd32" aria-label="文字色 4"></td>
 <td><input type="text" value="Effect" aria-label="英単語 4"></td>
 <td><input type="text" value="効果" aria-label="日本語訳 4"></td>
-<td class="delete-col"><button class="term-delete-btn locked" type="button" aria-label="行を削除不可" disabled><span class="material-symbols-outlined">delete</span></button></td>
+<td class="delete-col"><button class="term-reset-btn" type="button" aria-label="4行目を初期値に戻す" data-default-color="#9acd32" data-default-en="Effect" data-default-ja="効果"><span class="material-symbols-outlined">restart_alt</span></button></td>
 </tr>
 <tr>
 <td class="color-col"><input class="color-chip-input" type="color" value="#66ccff" aria-label="文字色 5"></td>
 <td><input type="text" value="Item" aria-label="英単語 5"></td>
 <td><input type="text" value="アイテム" aria-label="日本語訳 5"></td>
-<td class="delete-col"><button class="term-delete-btn locked" type="button" aria-label="行を削除不可" disabled><span class="material-symbols-outlined">delete</span></button></td>
+<td class="delete-col"><button class="term-reset-btn" type="button" aria-label="5行目を初期値に戻す" data-default-color="#66ccff" data-default-en="Item" data-default-ja="アイテム"><span class="material-symbols-outlined">restart_alt</span></button></td>
 </tr>
 </tbody>
 </table>
