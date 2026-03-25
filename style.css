@@ -1,4 +1,12 @@
 
+@font-face{
+    font-family:"Corporate Mincho ver3";
+    src:local("Corporate Mincho ver3"),
+        local("コーポレート明朝 ver3"),
+        url("font/Corporate-Mincho-ver3.otf") format("opentype");
+    font-display:swap;
+}
+
 body{
     margin:0;
     font-family:sans-serif;
@@ -823,11 +831,16 @@ body{
     font-weight:700;
 }
 
+.result-edit-title{
+    font-family:"Corporate Mincho ver3","コーポレート明朝 ver3",serif;
+}
+
 .result-edit-textarea{
     height:100%;
     resize:none;
     font-size:12px;
     line-height:1.25;
+    font-family:"Hiragino Sans","ヒラギノ角ゴシック","Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;
 }
 
 .result-flip{
@@ -910,6 +923,7 @@ body{
     width:90%;
     font-size:15px;
     font-weight:700;
+    font-family:"Corporate Mincho ver3","コーポレート明朝 ver3",serif;
     line-height:1.15;
     margin:2px 0 13px;
     height:26px;
@@ -930,6 +944,12 @@ body{
     min-height:74px;
     max-height:74px;
     overflow:hidden;
+}
+
+.result-front-effect,
+.result-back-effect{
+    font-family:"Hiragino Sans","ヒラギノ角ゴシック","Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;
+    font-weight:600;
 }
 
 .result-bottom{
