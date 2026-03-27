@@ -20,6 +20,7 @@ const resultPrevBtn = document.getElementById("resultPrevBtn");
 const resultNextBtn = document.getElementById("resultNextBtn");
 const bgColorInput = document.getElementById("bgColorInput");
 const bgColorCode = document.getElementById("bgColorCode");
+const bgColorPresetBtns = document.querySelectorAll(".bg-color-preset-btn");
 const refreshBgColorBtn = document.getElementById("refreshBgColorBtn");
 const textColorInput = document.getElementById("textColorInput");
 const textColorCode = document.getElementById("textColorCode");
@@ -31,6 +32,7 @@ const termBody = document.getElementById("termBody");
 const addTermBtn = document.getElementById("addTermBtn");
 const termMeta = document.getElementById("termMeta");
 const apiKeyStorageKey = "openai_api_key_cache";
+const glossaryStorageKey = "custom_glossary_rows_cache";
 const defaultFrameImagePath = "image/flame.png";
 const powerFrameImagePath = "image/flame_for_power.png";
 const corporateMinchoFontPath = "font/Corporate-Mincho-ver3.otf";
@@ -191,7 +193,7 @@ function getPrintCardHtml(content){
         '<div class="print-result-title">' + content.titleHtml + "</div>" +
         '<div class="print-result-body">' +
         '<div class="print-result-effect-wrap">' +
-        '<div class="print-result-effect" aria-label="' + escapeHtml(content.effectText) + '">' + content.effectHtml + "</div>" +
+        '<div class="print-result-effect" aria-label="' + escapeHtml(content.effectText) + '"><div class="print-result-effect-text">' + content.effectHtml + "</div></div>" +
         "</div>" +
         "</div>" +
         getPrintBottomHtml(content) +
@@ -294,15 +296,15 @@ body{
     flex:1 1 auto;
     min-height:0;
     display:flex;
-    align-items:flex-start;
-    justify-content:flex-start;
+    align-items:center;
+    justify-content:center;
     overflow:hidden;
 }
 
 .print-result-title{
     box-sizing:border-box;
     width:90%;
-    font-size:13px;
+    font-size:15px;
     font-weight:700;
     font-family:"Corporate Mincho ver3","コーポレート明朝 ver3",serif;
     line-height:1.2;
@@ -319,10 +321,12 @@ body{
 }
 
 .print-result-effect{
-    width:48mm;
-    display:block;
+    width:52mm;
+    display:flex;
+    align-items:center;
+    justify-content:center;
     margin:0 auto;
-    font-size:11px;
+    font-size:26px;
     font-family:"Hiragino Sans","ヒラギノ角ゴシック","Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;
     font-weight:600;
     line-height:1.2;
@@ -333,6 +337,11 @@ body{
     white-space:pre-wrap;
     word-break:break-word;
     overflow:hidden;
+}
+
+.print-result-effect-text{
+    width:100%;
+    display:block;
 }
 
 .print-result-bottom{
@@ -426,6 +435,54 @@ ${getPrintPreviewStyles()}
 ${cardsList.map(getPrintWindowCardHtml).join("")}
 </section>
 </main>
+<script>
+function fitTextToBox(element, maxSize, minSize){
+    if(!element) return;
+    let size = maxSize;
+    element.style.fontSize = size + "px";
+    while(size > minSize && (element.scrollHeight > element.clientHeight || element.scrollWidth > element.clientWidth)){
+        size -= 0.5;
+        element.style.fontSize = size + "px";
+    }
+}
+
+function fitPrintEffectText(element){
+    if(!element) return;
+    const textElement = element.querySelector(".print-result-effect-text") || element;
+    const baseSize = Number.parseFloat(window.getComputedStyle(textElement).fontSize) || 26;
+    const minSize = 10;
+    element.style.fontSize = baseSize + "px";
+    textElement.style.fontSize = baseSize + "px";
+
+    let targetSize = baseSize;
+    while(targetSize > minSize){
+        const overflowsHeight = textElement.scrollHeight > (element.clientHeight + 1);
+        if(!overflowsHeight){
+            break;
+        }
+        targetSize -= 0.18;
+        element.style.fontSize = targetSize + "px";
+        textElement.style.fontSize = targetSize + "px";
+    }
+}
+
+function fitPrintCardText(){
+    document.querySelectorAll(".print-result-effect").forEach((el) => fitPrintEffectText(el));
+    document.querySelectorAll(".print-result-type").forEach((el) => fitTextToBox(el, 12, 8));
+}
+
+window.addEventListener("load", () => {
+    const runFit = () => {
+        fitPrintCardText();
+        window.__printReady = true;
+    };
+    if(document.fonts && document.fonts.ready){
+        document.fonts.ready.then(runFit).catch(runFit);
+        return;
+    }
+    runFit();
+});
+</script>
 </body>
 </html>`
     );
@@ -440,9 +497,16 @@ function printCards(){
     const handleLoad = () => {
         const frameWindow = printRenderFrame.contentWindow;
         if(!frameWindow) return;
-        frameWindow.focus();
-        frameWindow.print();
-        printRenderFrame.removeEventListener("load", handleLoad);
+        const startPrint = () => {
+            frameWindow.focus();
+            frameWindow.print();
+            printRenderFrame.removeEventListener("load", handleLoad);
+        };
+        if(frameWindow.__printReady){
+            startPrint();
+            return;
+        }
+        frameWindow.setTimeout(startPrint, 80);
     };
     printRenderFrame.addEventListener("load", handleLoad);
     printRenderFrame.srcdoc = buildPrintWindowHtml(printableCards);
@@ -490,6 +554,14 @@ function applyLiveThemeColors(){
 }
 
 bgColorInput.addEventListener("input", applyLiveThemeColors);
+bgColorPresetBtns.forEach((button) => {
+    button.addEventListener("click", () => {
+        const presetColor = button.getAttribute("data-color");
+        if(!presetColor) return;
+        bgColorInput.value = presetColor;
+        applyLiveThemeColors();
+    });
+});
 textColorInput.addEventListener("input", applyLiveThemeColors);
 textColorPresetBtns.forEach((button) => {
     button.addEventListener("click", () => {
@@ -618,7 +690,9 @@ function getCardFieldHtml(card, fieldName){
         return preserveLineBreaks(escapeHtml(text));
     }
     const config = cardFieldConfig[fieldName];
-    const html = applyGlossaryColorToText(text, card[config.extractedKey], getGlossaryEntries()) || config.frontEmpty;
+    const html = renderInlineAbilityTokens(
+        applyGlossaryColorToText(text, card[config.extractedKey], getGlossaryEntries()) || config.frontEmpty
+    );
     return preserveLineBreaks(html);
 }
 
@@ -776,6 +850,15 @@ function applyGlossaryColorToText(japaneseText, sourceEnglishText, entries){
     });
 
     return html;
+}
+
+function renderInlineAbilityTokens(html){
+    return String(html).replace(/\{([a-zA-Z0-9_-]+),\s*(\d{1,3})\}/g, (_match, abilityType, ratioText) => {
+        const normalizedType = String(abilityType).trim();
+        const normalizedRatio = Math.max(1, Math.min(300, Number.parseInt(ratioText, 10) || 100));
+        const imagePath = "image/ability_" + normalizedType + ".png";
+        return '<img class="card-inline-ability" src="' + escapeHtml(imagePath) + '" alt="" style="width:' + normalizedRatio + '%;">';
+    });
 }
 
 function getApiKeyOrAlert(){
@@ -1452,6 +1535,60 @@ function updateTermMeta(){
     addTermBtn.disabled = count >= maxTerms;
 }
 
+function saveGlossaryState(){
+    const rows = Array.from(termBody.querySelectorAll("tr"));
+    const glossaryState = rows.map((row) => {
+        const colorInput = row.querySelector('input[type="color"]');
+        const textInputs = row.querySelectorAll('input[type="text"]');
+        const resetBtn = row.querySelector(".term-reset-btn");
+        return {
+            color: colorInput ? colorInput.value : "#000000",
+            en: textInputs[0] ? textInputs[0].value : "",
+            ja: textInputs[1] ? textInputs[1].value : "",
+            isDefault: Boolean(resetBtn),
+            defaultColor: resetBtn ? (resetBtn.getAttribute("data-default-color") || "#000000") : "",
+            defaultEn: resetBtn ? (resetBtn.getAttribute("data-default-en") || "") : "",
+            defaultJa: resetBtn ? (resetBtn.getAttribute("data-default-ja") || "") : ""
+        };
+    });
+    localStorage.setItem(glossaryStorageKey, JSON.stringify(glossaryState));
+}
+
+function getGlossaryRowHtml(rowNo, row){
+    if(row.isDefault){
+        return '<tr>' +
+            '<td class="color-col"><input class="color-chip-input" type="color" value="' + escapeHtml(row.color || "#000000") + '" aria-label="文字色 ' + rowNo + '"></td>' +
+            '<td><input type="text" value="' + escapeHtml(row.en || "") + '" aria-label="英単語 ' + rowNo + '"></td>' +
+            '<td><input type="text" value="' + escapeHtml(row.ja || "") + '" aria-label="日本語訳 ' + rowNo + '"></td>' +
+            '<td class="delete-col"><button class="term-reset-btn" type="button" aria-label="' + rowNo + '行目を初期値に戻す" data-default-color="' + escapeHtml(row.defaultColor || row.color || "#000000") + '" data-default-en="' + escapeHtml(row.defaultEn || row.en || "") + '" data-default-ja="' + escapeHtml(row.defaultJa || row.ja || "") + '"><span class="material-symbols-outlined">restart_alt</span></button></td>' +
+            "</tr>";
+    }
+    return '<tr>' +
+        '<td class="color-col"><input class="color-chip-input" type="color" value="' + escapeHtml(row.color || "#000000") + '" aria-label="文字色 ' + rowNo + '"></td>' +
+        '<td><input type="text" value="' + escapeHtml(row.en || "") + '" aria-label="英単語 ' + rowNo + '"></td>' +
+        '<td><input type="text" value="' + escapeHtml(row.ja || "") + '" aria-label="日本語訳 ' + rowNo + '"></td>' +
+        '<td class="delete-col"><button class="term-delete-btn" type="button" aria-label="行を削除"><span class="material-symbols-outlined">delete</span></button></td>' +
+        "</tr>";
+}
+
+function loadGlossaryState(){
+    const cached = localStorage.getItem(glossaryStorageKey);
+    if(!cached) return false;
+    try{
+        const glossaryState = JSON.parse(cached);
+        if(!Array.isArray(glossaryState) || !glossaryState.length){
+            return false;
+        }
+        termBody.innerHTML = glossaryState.slice(0, maxTerms).map((row, index) => {
+            return getGlossaryRowHtml(index + 1, row || {});
+        }).join("");
+        return true;
+    }catch(_error){
+        localStorage.removeItem(glossaryStorageKey);
+        return false;
+    }
+}
+
 function addTermRow(){
     const count = termBody.querySelectorAll("tr").length;
     if(count >= maxTerms) return;
@@ -1461,6 +1598,7 @@ function addTermRow(){
     tr.innerHTML = '<td class="color-col"><input class="color-chip-input" type="color" value="#000000" aria-label="文字色 ' + rowNo + '"></td><td><input type="text" aria-label="英単語 ' + rowNo + '"></td><td><input type="text" aria-label="日本語訳 ' + rowNo + '"></td><td class="delete-col"><button class="term-delete-btn" type="button" aria-label="行を削除"><span class="material-symbols-outlined">delete</span></button></td>';
     termBody.appendChild(tr);
     updateTermMeta();
+    saveGlossaryState();
 }
 
 function getDefaultGlossaryRowHtml(rowNo, color, en, ja){
@@ -1500,6 +1638,7 @@ termBody.addEventListener("click", (e) => {
         if(textInputs[1]){
             textInputs[1].value = resetBtn.getAttribute("data-default-ja") || "";
         }
+        saveGlossaryState();
         rerenderResultCardsIfVisible();
         return;
     }
@@ -1510,17 +1649,26 @@ termBody.addEventListener("click", (e) => {
     if(!row) return;
     row.remove();
     updateTermMeta();
+    saveGlossaryState();
 });
 
 resetGlossaryBtn.addEventListener("click", () => {
     termBody.innerHTML = getDefaultGlossaryRowsHtml();
     updateTermMeta();
+    saveGlossaryState();
     rerenderResultCardsIfVisible();
 });
 
 termBody.addEventListener("input", () => {
+    saveGlossaryState();
     rerenderResultCardsIfVisible();
 });
+
+if(!loadGlossaryState()){
+    termBody.innerHTML = getDefaultGlossaryRowsHtml();
+    saveGlossaryState();
+}
+updateTermMeta();
 
 addTermBtn.addEventListener("click", addTermRow);
 refreshBgColorBtn.addEventListener("click", async () => {

@@ -448,10 +448,24 @@ body{
     padding:0;
     cursor:pointer;
     flex:0 0 auto;
+    grid-column:1;
 }
 
 .text-color-preset-btn.gold{
     background:#EBC655;
+    grid-column:2;
+}
+
+.bg-color-preset-btn{
+    width:18px;
+    height:18px;
+    border:0;
+    border-radius:999px;
+    background:#FCF8F8;
+    padding:0;
+    cursor:pointer;
+    flex:0 0 auto;
+    grid-column:1;
 }
 
 .color-action-btn{
@@ -459,6 +473,7 @@ body{
     height:24px;
     gap:1px;
     padding:0 2px;
+    grid-column:3;
 }
 
 .color-action-btn .material-symbols-outlined{
@@ -538,6 +553,13 @@ body{
 
 .dict-color-row .color-code{
     margin-right:auto;
+}
+
+.color-row-actions{
+    display:grid;
+    grid-template-columns:18px 18px 32px;
+    align-items:center;
+    column-gap:8px;
 }
 
 .color-code{
@@ -950,6 +972,13 @@ body{
 .result-back-effect{
     font-family:"Hiragino Sans","ヒラギノ角ゴシック","Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;
     font-weight:600;
+}
+
+.card-inline-ability{
+    display:inline-block;
+    max-width:100%;
+    height:auto;
+    vertical-align:middle;
 }
 
 .result-bottom{
