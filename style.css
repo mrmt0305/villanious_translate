@@ -282,6 +282,54 @@ body{
     min-height:240px;
 }
 
+.icon-panel{
+    min-height:auto;
+    gap:10px;
+}
+
+.icon-panel h3{
+    margin:0;
+}
+
+.icon-panel-note{
+    color:#64748b;
+    font-size:12px;
+    line-height:1.5;
+}
+
+.icon-panel-note code{
+    font-family:monospace;
+    font-size:12px;
+}
+
+.icon-panel-list{
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+}
+
+.icon-panel-item{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:8px 10px;
+    border:1px solid #dbe3ee;
+    border-radius:10px;
+    background:#fff;
+}
+
+.icon-panel-item img{
+    width:66px;
+    height:66px;
+    object-fit:contain;
+    display:block;
+}
+
+.icon-panel-item span{
+    font-weight:700;
+    color:#334155;
+}
+
 .editor-grid{
     display:grid;
     grid-template-columns:1fr;
