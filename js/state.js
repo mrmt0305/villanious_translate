@@ -39,12 +39,10 @@ const STORAGE_KEYS = {
 
 const defaultFrameImagePath = "image/flame.png";
 const powerFrameImagePath = "image/flame_for_power.png";
-const corporateMinchoFontPath = "font/Corporate-Mincho-ver3.otf";
 const defaultResultBgColor = "#ffffff";
 const defaultFrameTextColor = "#ebc655";
-const printFrameImageUrl = new URL(defaultFrameImagePath, window.location.href).href;
-const printPowerFrameImageUrl = new URL(powerFrameImagePath, window.location.href).href;
-const printCorporateMinchoFontUrl = new URL(corporateMinchoFontPath, window.location.href).href;
+const defaultFrameImageUrl = new URL(defaultFrameImagePath, window.location.href).href;
+const powerFrameImageUrl = new URL(powerFrameImagePath, window.location.href).href;
 
 const DEFAULT_GLOSSARY_ROWS = [
     { color: "#ff0000", en: "Ally", ja: "味方" },

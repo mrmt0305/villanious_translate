@@ -177,20 +177,8 @@ function renderResultCards(){
             "</div>" +
             '<button class="result-flip" type="button" aria-label="翻訳結果カードを裏返す">' +
             '<div class="result-card">' +
-            '<div class="' + getCardFaceClassName("front") + '">' +
-            (isEditing
-                ? '<div class="result-head result-front-title"><input class="result-edit-input result-edit-title" type="text" value="' + escapeHtml(card.translatedTitle) + '" aria-label="タイトル編集"></div>'
-                : '<div class="result-head result-front-title result-title-display">' + getCardFieldHtml(card, "title") + "</div>") +
-            (isEditing
-                ? '<div class="result-row result-front-effect"><textarea class="result-edit-textarea result-edit-effect" aria-label="内容編集">' + escapeHtml(card.translatedEffect) + "</textarea></div>"
-                : '<div class="result-row result-front-effect">' + getCardFieldHtml(card, "effect") + "</div>") +
-            getResultBottomHtml(card, "front", isEditing) +
-            "</div>" +
-            '<div class="' + getCardFaceClassName("back") + '">' +
-            '<div class="result-head result-back-title result-title-display">' + preserveLineBreaks(escapeHtml(getCardFieldText(card, "title", "back"))) + "</div>" +
-            '<div class="result-row result-back-effect">' + preserveLineBreaks(escapeHtml(getCardFieldText(card, "effect", "back"))) + "</div>" +
-            getResultBottomHtml(card, "back", false) +
-            "</div>" +
+            getResultFaceHtml(card, "front", isEditing) +
+            getResultFaceHtml(card, "back", false) +
             "</div>" +
             "</button>" +
             '<div class="result-actions">' +

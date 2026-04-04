@@ -49,6 +49,11 @@ function getCardFaceClassName(side){
     return `result-face ${side}`;
 }
 
+// 用途: カード状態に応じて使うフレーム画像URLを返す。
+function getCardFrameImageUrl(card){
+    return shouldUsePowerFrame(card) ? powerFrameImageUrl : defaultFrameImageUrl;
+}
+
 // 用途: 印刷枚数入力の値を安全な整数へ正規化する。
 function getCardPrintCopies(card){
     const parsed = Number.parseInt(card.printCopies, 10);
@@ -234,6 +239,33 @@ function getResultBottomHtml(card, side, isEditing){
     return (
         '<div class="result-bottom no-power">' +
         '<div class="result-row result-type result-' + side + '-type">' + typeHtml + "</div>" +
+        "</div>"
+    );
+}
+
+// 用途: 結果カードの片面分の HTML を共通生成して、画面表示と印刷で使い回せるようにする。
+function getResultFaceHtml(card, side, isEditing){
+    if(side === "front"){
+        return (
+            '<div class="' + getCardFaceClassName("front") + '">' +
+            '<img class="result-frame-layer" src="' + escapeHtml(getCardFrameImageUrl(card)) + '" alt="" aria-hidden="true">' +
+            (isEditing
+                ? '<div class="result-head result-front-title"><input class="result-edit-input result-edit-title" type="text" value="' + escapeHtml(card.translatedTitle) + '" aria-label="タイトル編集"></div>'
+                : '<div class="result-head result-front-title result-title-display">' + getCardFieldHtml(card, "title") + "</div>") +
+            (isEditing
+                ? '<div class="result-row result-front-effect"><textarea class="result-edit-textarea result-edit-effect" aria-label="内容編集">' + escapeHtml(card.translatedEffect) + "</textarea></div>"
+                : '<div class="result-row result-front-effect">' + getCardFieldHtml(card, "effect") + "</div>") +
+            getResultBottomHtml(card, "front", isEditing) +
+            "</div>"
+        );
+    }
+
+    return (
+        '<div class="' + getCardFaceClassName("back") + '">' +
+        '<img class="result-frame-layer" src="' + escapeHtml(getCardFrameImageUrl(card)) + '" alt="" aria-hidden="true">' +
+        '<div class="result-head result-back-title result-title-display">' + preserveLineBreaks(escapeHtml(getCardFieldText(card, "title", "back"))) + "</div>" +
+        '<div class="result-row result-back-effect">' + preserveLineBreaks(escapeHtml(getCardFieldText(card, "effect", "back"))) + "</div>" +
+        getResultBottomHtml(card, "back", false) +
         "</div>"
     );
 }

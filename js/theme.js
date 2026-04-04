@@ -12,18 +12,7 @@ function buildCardThemeStyle(bgColor, textColor, borderColor, hasPower){
     return [
         `--result-bg:${bgColor || defaultResultBgColor}`,
         `--result-text:${textColor || defaultFrameTextColor}`,
-        `--result-border:${borderColor || textColor || defaultFrameTextColor}`,
-        `--result-frame-image:url("${hasPower ? powerFrameImagePath : defaultFrameImagePath}")`
-    ].join(";");
-}
-
-// 用途: 印刷カード用の CSS 変数文字列を生成する。
-function buildPrintCardThemeStyle(bgColor, textColor, borderColor, hasPower){
-    return [
-        `--print-bg:${bgColor || defaultResultBgColor}`,
-        `--print-text:${textColor || defaultFrameTextColor}`,
-        `--print-border:${borderColor || textColor || defaultFrameTextColor}`,
-        `background-image:url(&quot;${escapeHtml(hasPower ? printPowerFrameImageUrl : printFrameImageUrl)}&quot;)`
+        `--result-border:${borderColor || textColor || defaultFrameTextColor}`
     ].join(";");
 }
 
