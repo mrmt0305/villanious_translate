@@ -95,7 +95,7 @@ body{
 }
 
 .print-result-item .result-power{
-    top:calc(-3.5mm);
+    bottom:5px;
     font-weight:700;
 }
 
@@ -150,13 +150,12 @@ function fitTextToBox(element, maxSize, minSize){
     }
 }
 
-// 用途: 1枚の結果カード内にある文字サイズを画面表示と同じ基準で自動調整する。
+// 用途: 1枚の結果カード内にあるタイトル・本文を画面表示と同じ基準で自動調整する。
 function fitResultCardText(root){
     if(!root) return;
     root.querySelectorAll(".result-head").forEach((el) => fitTextToBox(el, 15, 8));
-    root.querySelectorAll(".result-row:not(.result-type)").forEach((el) => fitTextToBox(el, 13, 8));
-    root.querySelectorAll(".result-type").forEach((el) => fitTextToBox(el, 13, 8));
-    root.querySelectorAll(".result-power").forEach((el) => fitTextToBox(el, 12, 8));
+    root.querySelectorAll(".result-effect-content").forEach((el) => fitTextToBox(el, 13, 8));
+    root.querySelectorAll(".result-row:not(.result-type):not(.result-front-effect)").forEach((el) => fitTextToBox(el, 13, 8));
 }
 
 // 用途: 印刷対象カード全体へ文字サイズ調整を適用してから印刷準備完了を通知する。

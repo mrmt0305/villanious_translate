@@ -940,6 +940,11 @@ body{
 }
 
 .result-face{
+    --result-title-height:26px;
+    --result-effect-height:92px;
+    --result-title-gap:6px;
+    --result-bottom-height:24px;
+    --result-type-height:18px;
     position:absolute;
     inset:0;
     box-sizing:border-box;
@@ -948,9 +953,10 @@ body{
     background:var(--result-bg, #f8fafc);
     color:var(--result-text, #0f172a);
     padding:12px 21px 15px;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
+    display:grid;
+    grid-template-rows:var(--result-title-height) var(--result-effect-height);
+    row-gap:var(--result-title-gap);
+    justify-items:center;
     text-align:center;
     overflow:hidden;
     backface-visibility:hidden;
@@ -966,7 +972,7 @@ body{
     z-index:0;
 }
 
-.result-face > *:not(.result-frame-layer){
+.result-face > *:not(.result-frame-layer):not(.result-bottom){
     position:relative;
     z-index:2;
 }
@@ -1001,24 +1007,31 @@ body{
     font-weight:700;
     font-family:"Corporate Mincho ver3","コーポレート明朝 ver3",serif;
     line-height:1.15;
-    margin:2px 0 13px;
-    height:26px;
-    min-height:26px;
-    max-height:26px;
+    margin:0;
+    height:100%;
+    min-height:0;
+    max-height:var(--result-title-height);
     overflow:hidden;
 }
 
 .result-title-display{
-    padding-top:6px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+.result-front-title.result-title-display{
+    top:3px;
 }
 
 .result-row{
+    box-sizing:border-box;
     font-size:13px;
     line-height:1.25;
     width:92%;
-    height:74px;
-    min-height:74px;
-    max-height:74px;
+    height:100%;
+    min-height:0;
+    max-height:var(--result-effect-height);
     overflow:hidden;
 }
 
@@ -1026,6 +1039,17 @@ body{
 .result-back-effect{
     font-family:"Hiragino Sans","ヒラギノ角ゴシック","Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;
     font-weight:600;
+}
+
+.result-effect-content{
+    position:absolute;
+    top:50%;
+    left:50%;
+    width:100%;
+    height:90%;
+    margin-top:-41.4px;
+    margin-left:-50%;
+    overflow:hidden;
 }
 
 .card-inline-ability{
@@ -1036,11 +1060,16 @@ body{
 }
 
 .result-bottom{
-    width:100%;
-    margin-top:auto;
+    position:absolute;
+    left:21px;
+    right:21px;
+    bottom:10px;
+    width:auto;
+    height:var(--result-bottom-height);
     display:grid;
     grid-template-columns:24% 1fr 24%;
     align-items:end;
+    z-index:2;
 }
 
 .result-bottom.no-power{
@@ -1049,31 +1078,40 @@ body{
 }
 
 .result-power{
-    width:100%;
-    min-height:22px;
-    padding:8px 0 0 6px;
+    position:absolute;
+    left:-4.5px;
+    bottom:7px;
+    width:28px;
+    height:28px;
+    padding:0;
     box-sizing:border-box;
-    font-size:20px;
-    line-height:1.2;
-    text-align:left;
+    font-size:13px;
+    line-height:24px;
+    text-align:center;
     overflow:hidden;
-    position:relative;
-    top:-4mm;
-    z-index:1;
+    display:block;
+    font-weight:700;
 }
 
 .result-type{
+    display:flex;
+    grid-column:1 / -1;
+    justify-self:center;
+    align-items:flex-end;
+    justify-content:center;
     width:88%;
-    font-size:12px;
-    padding-top:14px;
-    height:18px;
-    min-height:18px;
-    max-height:18px;
+    font-size:13px;
+    line-height:1;
+    padding:0;
+    box-sizing:border-box;
+    height:100%;
+    min-height:0;
+    max-height:100%;
     overflow:hidden;
 }
 
 .result-bottom-spacer{
-    width:100%;
+    display:none;
 }
 
 .hide{

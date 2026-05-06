@@ -254,7 +254,7 @@ function getResultFaceHtml(card, side, isEditing){
                 : '<div class="result-head result-front-title result-title-display">' + getCardFieldHtml(card, "title") + "</div>") +
             (isEditing
                 ? '<div class="result-row result-front-effect"><textarea class="result-edit-textarea result-edit-effect" aria-label="内容編集">' + escapeHtml(card.translatedEffect) + "</textarea></div>"
-                : '<div class="result-row result-front-effect">' + getCardFieldHtml(card, "effect") + "</div>") +
+                : '<div class="result-row result-front-effect"><div class="result-effect-content">' + getCardFieldHtml(card, "effect") + "</div></div>") +
             getResultBottomHtml(card, "front", isEditing) +
             "</div>"
         );

@@ -21,13 +21,12 @@ function fitResultTextToBox(element, maxSize, minSize){
     }
 }
 
-// 用途: 結果カード内のタイトル・本文・種類・数値の文字サイズを自動調整する。
+// 用途: 結果カード内のタイトル・本文の文字サイズを自動調整する。
 function fitResultCardText(root){
     if(!root) return;
     root.querySelectorAll(".result-head").forEach(el => fitResultTextToBox(el, 15, 8));
-    root.querySelectorAll(".result-row:not(.result-type)").forEach(el => fitResultTextToBox(el, 13, 8));
-    root.querySelectorAll(".result-type").forEach(el => fitResultTextToBox(el, 13, 8));
-    root.querySelectorAll(".result-power").forEach(el => fitResultTextToBox(el, 12, 8));
+    root.querySelectorAll(".result-effect-content").forEach(el => fitResultTextToBox(el, 13, 8));
+    root.querySelectorAll(".result-row:not(.result-type):not(.result-front-effect)").forEach(el => fitResultTextToBox(el, 13, 8));
 }
 
 // 用途: サムネイル側と翻訳結果側の横スクロール位置を同期する。
@@ -262,8 +261,13 @@ function renderResultCards(){
                 });
             }
         }else{
+            const frontEffectContent = itemEl.querySelector(".result-effect-content");
             frontTitle.innerHTML = getCardFieldHtml(card, "title");
-            frontEffect.innerHTML = getCardFieldHtml(card, "effect");
+            if(frontEffectContent){
+                frontEffectContent.innerHTML = getCardFieldHtml(card, "effect");
+            }else{
+                frontEffect.innerHTML = getCardFieldHtml(card, "effect");
+            }
             frontType.innerHTML = getCardFieldHtml(card, "type");
             if(frontPower){
                 frontPower.textContent = getCardPowerText(card, "front");
