@@ -3,7 +3,7 @@ function getPrintWindowCardHtml(card){
     return (
         '<article class="result-item print-result-item">' +
         '<div class="result-card print-result-card" style="' +
-        buildCardThemeStyle(card.resultBgColor, card.resultTextColor, card.resultTextColor, shouldUsePowerFrame(card)) +
+        buildCardThemeStyle(card.resultBgColor, card.resultTextColor, defaultFrameTextColor, shouldUsePowerFrame(card)) +
         '">' +
         getResultFaceHtml(card, "front", false) +
         "</div>" +
