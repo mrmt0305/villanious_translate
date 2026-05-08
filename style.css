@@ -1059,6 +1059,33 @@ body{
     vertical-align:middle;
 }
 
+.card-ability-callout{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:.55em;
+    width:100%;
+    margin:.2em 0;
+    line-height:1.18;
+}
+
+.card-ability-callout-icon{
+    flex:0 0 min(var(--ability-block-icon-width, 20%), 34%);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+.card-ability-callout-icon .card-inline-ability{
+    width:100% !important;
+}
+
+.card-ability-callout-text{
+    flex:0 1 auto;
+    min-width:0;
+    text-align:left;
+}
+
 .result-bottom{
     position:absolute;
     left:21px;

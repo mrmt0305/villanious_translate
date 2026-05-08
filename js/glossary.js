@@ -76,14 +76,27 @@ function applyGlossaryColorToText(japaneseText, sourceEnglishText, entries){
     return html;
 }
 
+// 用途: `{番号,比率}` 記法からアイコン画像タグを生成する。
+function getAbilityTokenImageHtml(abilityType, ratioText){
+    const normalizedType = String(abilityType).trim();
+    const normalizedRatio = Math.max(1, Math.min(300, Number.parseInt(ratioText, 10) || 100));
+    const imagePath = "image/ability_" + normalizedType + ".png";
+    return '<img class="card-inline-ability" src="' + escapeHtml(imagePath) + '" alt="" style="width:' + normalizedRatio + '%;">';
+}
+
 // 用途: 本文中の `{番号,比率}` 記法をアイコン画像タグへ変換する。
 function renderInlineAbilityTokens(html){
-    return String(html).replace(/\{([a-zA-Z0-9_-]+),\s*(\d{1,3})\}/g, (_match, abilityType, ratioText) => {
-        const normalizedType = String(abilityType).trim();
-        const normalizedRatio = Math.max(1, Math.min(300, Number.parseInt(ratioText, 10) || 100));
-        const imagePath = "image/ability_" + normalizedType + ".png";
-        return '<img class="card-inline-ability" src="' + escapeHtml(imagePath) + '" alt="" style="width:' + normalizedRatio + '%;">';
-    });
+    return String(html)
+        .replace(/\{([a-zA-Z0-9_-]+),\s*(\d{1,3})\}\[([\s\S]*?)\]/g, (_match, abilityType, ratioText, blockText) => {
+            const normalizedRatio = Math.max(1, Math.min(300, Number.parseInt(ratioText, 10) || 100));
+            return '<span class="card-ability-callout" style="--ability-block-icon-width:' + normalizedRatio + '%;">' +
+                '<span class="card-ability-callout-icon">' + getAbilityTokenImageHtml(abilityType, "100") + "</span>" +
+                '<span class="card-ability-callout-text">' + blockText + "</span>" +
+                "</span>";
+        })
+        .replace(/\{([a-zA-Z0-9_-]+),\s*(\d{1,3})\}/g, (_match, abilityType, ratioText) => {
+            return getAbilityTokenImageHtml(abilityType, ratioText);
+        });
 }
 
 // 用途: 用語辞典の件数表示と追加ボタンの活性状態を更新する。
